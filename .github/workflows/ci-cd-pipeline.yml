@@ -1,0 +1,146 @@
+name: Quranific Portal — CI
+
+# A-P4-03: Real CI pipeline.
+# R-R5-04: Backend job upgraded from collect-only to a real pytest run with
+#           Postgres service and requirements-test.txt installed.
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "20"
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1: Django — system check, migration drift, real pytest run (Postgres)
+  # ─────────────────────────────────────────────────────────────────────────────
+  backend:
+    name: Backend (Django + Postgres)
+    runs-on: ubuntu-latest
+
+    # R-R5-04: Real Postgres service — matches the docker-compose setup used in
+    # local dev and OCI. pytest-django creates/destroys test_<POSTGRES_DB>.
+    # Never touches a real database.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB:       quranific_ci
+          POSTGRES_USER:     ci_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE:     config.settings
+      DJANGO_SECRET_KEY:          ci-test-secret-key-not-for-production-use-only
+      DJANGO_DEBUG:               "True"
+      DJANGO_ALLOWED_HOSTS:       "localhost,127.0.0.1"
+      DJANGO_CORS_ALLOWED_ORIGINS: ""
+      # R-R5-04: Real Postgres — matches DATABASES config in settings.py
+      POSTGRES_DB:       quranific_ci
+      POSTGRES_USER:     ci_user
+      POSTGRES_PASSWORD: ci_password
+      POSTGRES_HOST:     localhost
+      POSTGRES_PORT:     "5432"
+      DB_CONN_MAX_AGE:   "0"        # Disable persistent connections in CI
+      # JWT
+      JWT_ACCESS_TOKEN_LIFETIME_DAYS:  "1"
+      JWT_REFRESH_TOKEN_LIFETIME_DAYS: "7"
+      # LiveKit — stub values; startup guard will log CRITICAL but not block
+      LIVEKIT_API_KEY:    ci_livekit_key
+      LIVEKIT_API_SECRET: ci_livekit_secret_32_chars_minimum
+      LIVEKIT_URL:        "ws://localhost:7880"
+      # Redis — not used in tests; stub avoids missing-key errors
+      REDIS_PASSWORD:     ci_redis_password
+      REDIS_URL:          "redis://:ci_redis_password@localhost:6379/0"
+      # 2Checkout — stub
+      TWOCHECKOUT_VENDOR_ID:   ci_vendor
+      TWOCHECKOUT_SECRET_WORD: ci_secret_word
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-test.txt
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r backend/requirements-test.txt
+        working-directory: .
+
+      - name: Django system check
+        # --deploy raises warnings about DEBUG=True in CI; fall back to plain check.
+        run: python manage.py check --deploy --fail-level WARNING 2>&1 || python manage.py check
+        working-directory: backend
+
+      - name: Check for migration drift
+        run: python manage.py makemigrations --check --dry-run
+        working-directory: backend
+
+      # R-R5-04: Real pytest run against Postgres.
+      # pytest-django creates test_quranific_ci, runs all tests, destroys DB.
+      - name: Run test suite (pytest)
+        run: python -m pytest -v --tb=short
+        working-directory: backend
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2: React frontend — install + build
+  # ─────────────────────────────────────────────────────────────────────────────
+  frontend:
+    name: Frontend (React / Vite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build production bundle
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: http://localhost:8000/api/
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 3: Security — check for accidental secret commits
+  # ─────────────────────────────────────────────────────────────────────────────
+  secrets-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Full history for gitleaks
+
+      - name: Detect secrets with gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true   # Advisory only — does not block merge yet

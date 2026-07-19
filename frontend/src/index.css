@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-50 text-emerald-950 font-sans antialiased selection:bg-gold-200 selection:text-emerald-950;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-text;
+  }
+  
+  /* Utilities for glassmorphism and transitions to enforce UX */
+  .glass-nav {
+    @apply bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300;
+  }
+  .glass-nav-transparent {
+    @apply bg-transparent border-transparent shadow-none transition-all duration-300;
+  }
+}

@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# livekit/livekit.yaml — Production LiveKit Server Configuration
+#
+# R-R3-05 FIX: Replaced insecure devkey/secret defaults; set use_external_ip:
+# true for OCI NAT; added TURN server stub for restrictive networks.
+#
+# ⚠️  BEFORE DEPLOYING TO OCI — REQUIRED OPERATOR ACTIONS:
+#   1. Key pair below is a LOCAL/DEV pair only — generate a SEPARATE pair for
+#      OCI production via OCI Vault, do not reuse this one in production.
+#   2. Set LIVEKIT_API_KEY and LIVEKIT_API_SECRET in your .env file to match
+#      exactly the key:value pair in the 'keys:' section below.
+#   3. Uncomment and configure the TURN section with your TURN server details.
+#      For a self-hosted Coturn on OCI: install coturn, open UDP 3478 + 5349.
+#   4. Replace YOUR_OCI_PUBLIC_IP with your actual OCI instance public IP, OR
+#      leave use_external_ip: true so LiveKit auto-detects via STUN.
+# ─────────────────────────────────────────────────────────────────────────────
+
+port: 7880
+
+rtc:
+  tcp_port: 7881
+  # R-R3-05: Changed from false → true. OCI instances are behind NAT.
+  # With false, ICE candidates advertise the private IP (10.x.x.x) which is
+  # unreachable from the internet — clients silently fail to connect media.
+  # true causes LiveKit to auto-detect the public IP via a STUN request.
+  use_external_ip: true
+
+  # Optional: if auto-detection fails (airgapped OCI subnet), set explicitly:
+  # node_ip: YOUR_OCI_PUBLIC_IP
+
+  # UDP media ports (must be open in OCI Security List):
+  port_range_start: 50000
+  port_range_end: 60000
+
+# ─────────────────────────────────────────────────────────────────────────────
+# API KEYS
+# R-R3-05: devkey:secret removed. This is a local/dev key pair.
+# The key name on the left is the LIVEKIT_API_KEY env var value.
+# The value on the right is the LIVEKIT_API_SECRET env var value.
+#
+# ⚠️  DO NOT commit real keys. Add livekit/livekit.yaml to .gitignore or
+#     use Docker secrets / OCI Vault to inject at runtime.
+# ⚠️  Generate a DIFFERENT pair for OCI production — this pair is dev-only.
+# ─────────────────────────────────────────────────────────────────────────────
+keys:
+  62a9e0153b4b8978f966b096d12a26784d2a608866368116a21a72f4396bbd20: 9b699948de67665766a9cfd1872d9b9f67fd5975d4fbb8f919303af5a01a5a34
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TURN SERVER (R-R3-05)
+# Required for clients on restrictive networks (school/corporate firewalls
+# that block UDP). Without TURN, ~15-30% of users on such networks cannot
+# establish a media connection.
+#
+# Option A — Self-hosted Coturn on OCI (recommended, free):
+#   1. sudo apt install coturn  (on OCI Ubuntu instance)
+#   2. Configure /etc/turnserver.conf with your OCI public IP
+#   3. Open OCI Security List: UDP/TCP 3478, TLS 5349, UDP 49152-65535
+#
+# Option B — Managed TURN (Twilio Network Traversal, Metered TURN, etc.)
+#
+# Uncomment and fill in when your TURN server is ready:
+# turn:
+#   servers:
+#     - uri: turn:YOUR_OCI_PUBLIC_IP:3478
+#       username: your_turn_username
+#       credential: your_turn_password
+#   udp_mux_port: 3478         # share port with STUN
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LOGGING (recommended for production)
+# ─────────────────────────────────────────────────────────────────────────────
+logging:
+  level: warn    # info | warn | error  (use info during initial deploy debug)
+  sample: true

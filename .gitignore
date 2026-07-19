@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Quranific Portal — Root .gitignore
+# Covers: Python/Django backend, React/Vite frontend, Docker, OCI ops files.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Secrets & environment (NEVER commit these) ────────────────────────────────
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+# allow a sanitised example if one exists
+!.env.example
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+.Python
+venv/
+.venv/
+env/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.log
+
+# ── Django specifics ──────────────────────────────────────────────────────────
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+staticfiles/
+mediafiles/
+media/
+local_settings.py
+
+# ── Node / JS (R-R2-04: prevent backend/node_modules from ever reappearing) ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.yarn/
+
+# ── Frontend build artefacts ─────────────────────────────────────────────────
+frontend/dist/
+frontend/.vite/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+*.tar           # image exports
+docker-compose.override.yml
+
+# ── LiveKit config with real keys (operator-maintained, not in repo) ──────────
+# Uncomment when livekit.yaml contains real production keys:
+# livekit/livekit.yaml
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.orig
+
+# ── Dead scaffolding (R-R2-02: keep deleted, don't re-add) ───────────────────
+*.todo

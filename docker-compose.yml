@@ -1,0 +1,134 @@
+version: '3.8'
+
+# A-P7-05: Removed host port bindings for db (5432) and redis (6379).
+#   Both services are now reachable ONLY within the internal Docker network.
+#   The backend accesses them by service name (db:5432, redis:6379) via the
+#   'quranific_net' network — no host exposure needed.
+#
+# A-P7-06: Redis now runs with --requirepass. Set REDIS_PASSWORD in .env.
+#   REDIS_URL in .env must include the password:
+#     REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+#
+# A-P7-07: LiveKit --dev flag removed. Production mode reads auth keys from
+#   livekit.yaml only. Update keys: section in livekit/livekit.yaml before deploy.
+
+services:
+  # ── 1. Database ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: quranific_db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-quranific}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    # A-P7-05: NO host port binding — DB is internal only.
+    # Remove this comment block entirely if you need psql access from host:
+    #   ports: ["5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - quranific_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── 2. Cache ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: quranific_redis
+    restart: unless-stopped
+    # A-P7-06: requirepass added. Set REDIS_PASSWORD in .env.
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-changeme_redis_password}
+      --appendonly yes
+    # A-P7-06: NO host port binding — Redis is internal only.
+    volumes:
+      - redis_data:/data
+    networks:
+      - quranific_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-changeme_redis_password}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── 3. Video Server (LiveKit) ────────────────────────────────────────────────
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: quranific_video
+    restart: unless-stopped
+    # A-P7-07: Removed --dev flag. Production mode: keys and config from livekit.yaml only.
+    # IMPORTANT: Update keys: section in livekit/livekit.yaml with real API key/secret before deploy.
+    command: --config /livekit.yaml
+    ports:
+      - "7880:7880"       # HTTP / WebSocket signalling (keep host-exposed for clients)
+      - "7881:7881"       # TCP media
+      - "7882:7882/udp"   # UDP media
+    volumes:
+      - ./livekit/livekit.yaml:/livekit.yaml:ro
+    networks:
+      - quranific_net
+
+  # ── 4. Django REST Backend ───────────────────────────────────────────────────
+  backend:
+    container_name: quranific_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - quranific_net
+
+  # ── 5. React/Vite Frontend ───────────────────────────────────────────────────
+  frontend:
+    container_name: quranific_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Pass the backend API URL at build time so Vite can bake it in
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - quranific_net
+
+  # ── 6. AI Agent Bot (placeholder — not yet implemented) ──────────────────────
+  # A-P4-02: ai_bot is not yet built. This service is commented out until
+  # the module exists and OPENAI_API_KEY is configured with a real key.
+  #
+  # ai_bot:
+  #   container_name: quranific_ai_bot
+  #   build:
+  #     context: ./ai_bot
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - livekit
+  #     - backend
+  #   networks:
+  #     - quranific_net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  quranific_net:
+    driver: bridge

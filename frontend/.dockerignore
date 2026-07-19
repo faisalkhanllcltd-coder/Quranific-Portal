@@ -1,0 +1,9 @@
+# frontend/.dockerignore — keep the image lean
+node_modules/
+dist/
+.env
+.env.*
+.git/
+.gitignore
+*.log
+*.md

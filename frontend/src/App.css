@@ -1,0 +1,23 @@
+/*
+ * App.css — Quranific Portal
+ *
+ * This project uses Tailwind CSS for all component-level styling.
+ * This file is intentionally minimal and only contains global
+ * resets / utilities that cannot be expressed via Tailwind alone.
+ */
+
+/* Smooth scrollbar styling for overflow containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
