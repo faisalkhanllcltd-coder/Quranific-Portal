@@ -137,10 +137,10 @@ The race-condition guard in `PaymentListView.post()` catches `IntegrityError` fr
 ### Owner Lockout / No Password Reset — Unresolved, Not Fixed (A-P8-05 + R-R5-05 + R-R2-05)
 Three partially overlapping findings converge on the same risk: **an owner can lock themselves out with no recovery path:**
 - **A-P8-05** (`SystemAccessViewSet.partial_update()`) — the owner role can set `is_active=False` on their own account or on all other owner accounts. No guard prevents this. Status: **PENDING (MEDIUM)**.
-- **R-R5-05** — There is no password reset / forgot-password flow. If an owner forgets their password, the only recovery is SSH access to the server to run `reset_pw.py`. Status: **PENDING (FAST-FOLLOW)**.
-- **R-R2-05** — `RecoveryVault.jsx` exists in the frontend but the backend restore action it was meant to call was never built. Status: **PENDING (FAST-FOLLOW)**.
+- **R-R5-05** - There is no password reset / forgot-password flow. Status: **PENDING (FAST-FOLLOW)**. Explicitly deferred to post-launch because the practical risk of total owner lockout is now mitigated by the A-P8-05 self-deactivation fix and the documented Break-Glass Owner Recovery CLI procedure.
+- **R-R2-05** - `RecoveryVault.jsx` exists in the frontend but the backend restore action it was meant to call was never built. Status: **PENDING (FAST-FOLLOW)**.
 
-Together, these mean: if the sole owner locks their account or forgets their password in production, they are locked out of the platform with no self-service recovery. **This is an operational risk, not just a feature gap.** It should be prioritized above its current MEDIUM/FAST-FOLLOW tags when this is a single-owner-operated academy.
+Together, these meant an owner could accidentally lock their account in production with no recovery. **This operational risk is now mitigated:** A-P8-05 prevents self-deactivation and removal of the last owner, and the `reset_pw.py` script serves as a break-glass recovery. Therefore, the full UI password reset flow can remain a FAST-FOLLOW.
 
 ### A-P8-07 — JWT Refresh Ignores `is_active=False` — Real Risk Tagged LOW
 The ledger tags this LOW, but the practical impact is higher than that label suggests: if an admin deactivates a user account via `SystemAccessViewSet.partial_update()`, that user's existing refresh token remains valid and can generate new access tokens indefinitely until it expires naturally (7 days by default). For a deactivated teacher or manager with knowledge of the system, this is a 7-day window of unauthorized access after their account is suspended. The fix is a one-line custom token serializer that checks `user.is_active` before issuing. Whoever continues this work should treat it as MEDIUM in practice.

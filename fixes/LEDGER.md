@@ -76,7 +76,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P7-08 | P7-oracle-deploy.md | MEDIUM | PENDING | No django check --deploy validation documented | - |
 | A-P7-09 | P7-oracle-deploy.md | MEDIUM | PENDING | No environment-specific requirements split (psycopg2-binary in prod) | - |
 | A-P7-10 | P7-oracle-deploy.md | MEDIUM | PENDING | No OCI networking documentation | - |
-| A-P8-05 | P8-rbac-logic.md | MEDIUM | PENDING | SystemAccessViewSet.partial_update() — owner can self-lock or lock other owners | - |
+| A-P8-05 | P8-rbac-logic.md | MEDIUM | **FIXED** | SystemAccessViewSet.partial_update() hardened — owner self-deactivation blocked, self-demotion blocked, last-active-owner protection covers both is_active and role changes, role validated against USER_TYPES. | Y — verified via 69-passed run |
 | A-P8-06 | P8-rbac-logic.md | MEDIUM | PENDING | Parent role sees wrong child if parent_account FK misassigned | - |
 | **LOW — Audit** | | | | | |
 | A-P1-12 | P1-security.md | LOW | PENDING | .env may be committed to git — check history | - |

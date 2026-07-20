@@ -486,20 +486,53 @@ class SystemAccessViewSet(viewsets.ViewSet):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        proposed_active = user.is_active
         if 'is_active' in request.data:
-            user.is_active = request.data['is_active']
-            user.save(update_fields=['is_active'])
+            val = request.data['is_active']
+            if isinstance(val, str):
+                proposed_active = val.lower() not in ['false', '0', '']
+            else:
+                proposed_active = bool(val)
+
+        proposed_role = user.profile.user_type if hasattr(user, 'profile') else 'student'
         if 'role' in request.data:
-            role = request.data['role']
+            proposed_role = request.data['role']
+
+        is_self = (user.id == request.user.id)
+
+        if is_self:
+            if not proposed_active:
+                return Response({'error': 'You cannot deactivate your own account'}, status=status.HTTP_400_BAD_REQUEST)
+            if proposed_role != 'owner':
+                return Response({'error': 'You cannot demote your own account'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if target is currently an active owner
+        target_is_active_owner = user.is_active and hasattr(user, 'profile') and user.profile.user_type == 'owner'
+
+        # Ensure we don't leave 0 active owners
+        if target_is_active_owner and (not proposed_active or proposed_role != 'owner'):
+            other_active_owners = Profile.objects.filter(
+                user_type='owner', 
+                user__is_active=True
+            ).exclude(user_id=user.id).count()
+            if other_active_owners == 0:
+                return Response({'error': 'Cannot remove the last active owner.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if 'is_active' in request.data:
+            user.is_active = proposed_active
+            user.save(update_fields=['is_active'])
+
+        if 'role' in request.data:
             valid_roles = [choice[0] for choice in Profile.USER_TYPES]
-            if role not in valid_roles:
+            if proposed_role not in valid_roles:
                 return Response(
                     {'error': f'Invalid role. Must be one of: {valid_roles}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             profile, created = Profile.objects.get_or_create(user=user)
-            profile.user_type = role
+            profile.user_type = proposed_role
             profile.save(update_fields=['user_type'])
+
         return Response({'status': 'Access updated successfully'})
 
 

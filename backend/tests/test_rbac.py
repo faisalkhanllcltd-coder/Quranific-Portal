@@ -327,6 +327,92 @@ class TestSystemAccessPermissions:
             "System access response is not paginated — A-P4-01 regression."
         )
 
+    def test_owner_cannot_deactivate_self(self):
+        """Owner attempting to deactivate themselves must receive 400."""
+        owner_user = OwnerUserFactory(is_active=True)
+        client = _login(owner_user.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user.id}/", {"is_active": False}, format="json")
+        assert response.status_code == 400
+        assert "cannot deactivate your own account" in response.data['error'].lower()
+        owner_user.refresh_from_db()
+        assert owner_user.is_active is True
+
+    def test_owner_can_deactivate_last_other_owner_leaving_themselves(self):
+        """
+        Owner deactivating the last OTHER active owner leaves 1 active owner (themselves).
+        Since 1 is not zero, this succeeds normally per the rule.
+        """
+        from accounts.models import Profile, User
+        # Ensure only 2 owners exist
+        User.objects.filter(profile__user_type='owner').update(is_active=False)
+        owner_user1 = OwnerUserFactory(is_active=True)
+        owner_user2 = OwnerUserFactory(is_active=True)
+        
+        client = _login(owner_user1.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user2.id}/", {"is_active": False}, format="json")
+        assert response.status_code == 200
+        owner_user2.refresh_from_db()
+        assert owner_user2.is_active is False
+
+    def test_owner_can_deactivate_non_owner(self):
+        """Owner deactivating a non-owner should succeed normally."""
+        owner_user = OwnerUserFactory(is_active=True)
+        student_user = StudentUserFactory(is_active=True)
+        client = _login(owner_user.username)
+        response = client.patch(f"/api/accounts/system-access/{student_user.id}/", {"is_active": False}, format="json")
+        assert response.status_code == 200
+        student_user.refresh_from_db()
+        assert student_user.is_active is False
+
+    def test_owner_can_deactivate_owner_if_others_remain(self):
+        """Owner deactivating another owner succeeds if at least one OTHER owner remains active."""
+        owner_user1 = OwnerUserFactory(is_active=True)
+        owner_user2 = OwnerUserFactory(is_active=True)
+        owner_user3 = OwnerUserFactory(is_active=True)
+        client = _login(owner_user1.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user2.id}/", {"is_active": False}, format="json")
+        assert response.status_code == 200
+        owner_user2.refresh_from_db()
+        assert owner_user2.is_active is False
+
+    def test_owner_cannot_demote_self_from_owner_role(self):
+        """Owner attempting to change their own role away from owner must receive 400."""
+        owner_user = OwnerUserFactory(is_active=True)
+        client = _login(owner_user.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user.id}/", {"role": "manager"}, format="json")
+        assert response.status_code == 400
+        assert "cannot demote your own account" in response.data['error'].lower()
+        owner_user.profile.refresh_from_db()
+        assert owner_user.profile.user_type == 'owner'
+
+    def test_owner_can_demote_last_other_owner_leaving_themselves_as_sole_owner(self):
+        """
+        Owner demoting the last OTHER active owner leaves 1 active owner (themselves).
+        Since 1 is not zero, this succeeds normally per the rule.
+        """
+        from accounts.models import Profile, User
+        User.objects.filter(profile__user_type='owner').update(is_active=False)
+        owner_user1 = OwnerUserFactory(is_active=True)
+        owner_user2 = OwnerUserFactory(is_active=True)
+        
+        client = _login(owner_user1.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user2.id}/", {"role": "manager"}, format="json")
+        assert response.status_code == 200
+        owner_user2.profile.refresh_from_db()
+        assert owner_user2.profile.user_type == 'manager'
+
+    def test_owner_can_demote_owner_if_others_remain(self):
+        """Owner demoting another owner succeeds if at least one OTHER owner remains active."""
+        owner_user1 = OwnerUserFactory(is_active=True)
+        owner_user2 = OwnerUserFactory(is_active=True)
+        owner_user3 = OwnerUserFactory(is_active=True)
+        client = _login(owner_user1.username)
+        response = client.patch(f"/api/accounts/system-access/{owner_user2.id}/", {"role": "manager"}, format="json")
+        assert response.status_code == 200
+        owner_user2.profile.refresh_from_db()
+        assert owner_user2.profile.user_type == 'manager'
+
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # General Hardening — MyProfileView PATCH validation
