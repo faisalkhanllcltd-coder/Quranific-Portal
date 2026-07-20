@@ -101,6 +101,7 @@ services:
       args:
         # Pass the backend API URL at build time so Vite can bake it in
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/}
+        VITE_LIVEKIT_URL: ${LIVEKIT_URL}
     ports:
       - "80:80"
     depends_on:

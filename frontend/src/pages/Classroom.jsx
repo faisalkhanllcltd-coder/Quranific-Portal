@@ -15,7 +15,7 @@ import { Video, LogOut, AlertCircle, RefreshCw, Shield, Loader2, Wifi } from 'lu
 // ── CONFIG ─────────────────────────────────────────────────────────────────
 // IMPORTANT: Ensure VITE_LIVEKIT_URL is set in your frontend/.env file!
 // Example: VITE_LIVEKIT_URL=wss://your-project.livekit.cloud
-const LIVEKIT_WS_URL = import.meta.env.VITE_LIVEKIT_URL || 'ws://localhost:7880';
+const LIVEKIT_WS_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 // ── SUB-COMPONENT: CONNECTION STATUS INDICATOR ────────────────────────────
 function ConnectionStatusBadge() {
@@ -113,6 +113,15 @@ export default function Classroom() {
 
   const unmounted = useRef(false);
 
+  // Configuration guard
+  useEffect(() => {
+    if (!LIVEKIT_WS_URL) {
+      console.error("[Configuration Error] VITE_LIVEKIT_URL is not defined in the environment. WebRTC connections cannot be established.");
+      setError('Configuration error — contact support');
+      setLoading(false);
+    }
+  }, []);
+
   // ── FETCH TOKEN FROM BACKEND ────────────────────────────────────────────
   const fetchToken = useCallback(async () => {
     setLoading(true);
@@ -139,6 +148,8 @@ export default function Classroom() {
   }, [roomName]);
 
   useEffect(() => {
+    if (!LIVEKIT_WS_URL) return; // Handled by configuration guard
+
     if (roomName) {
       unmounted.current = false;
       fetchToken();

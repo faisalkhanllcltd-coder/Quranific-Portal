@@ -59,7 +59,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P2-06 | P2-data-backend.md | MEDIUM | **FIXED** | `StudentViewSet.create()` validation moved before `serializer.save()`. Returns 400 on invalid `parent_account_id`. Confirmed parent_id is optional per nullable model field. No other silent FK failures found in create(). | Y — verified via 72-passed run |
 | A-P2-07 | P2-data-backend.md | MEDIUM | **FIXED** | Added DB-level trigger via Django migration (`0002_immutability_trigger`) that raises an exception on any UPDATE or DELETE against the `log_systemlog` table. Confirmed app connects as `postgres` superuser, so documented least-privilege DB role requirement in PENDING_HUMAN_ACTIONS.md as a future hardening step. | Y — verified via 75-passed run |
 | A-P2-08 | P2-data-backend.md | MEDIUM | **FIXED** | Confirmed CI pipeline strictly enforces `makemigrations --check --dry-run` as a failing step. Added a `Pre-Deploy Checklist` to `README.md` requiring this manual check before non-CI deployments to prevent schema drift. | Y — verified via CI inspection and README update |
-| A-P3-06 | P3-api-contract.md | MEDIUM | PENDING | Classroom.jsx LiveKit fallback to ws://localhost in production | - |
+| A-P3-06 | P3-api-contract.md | MEDIUM | **FIXED** | Classroom.jsx LiveKit fallback to ws://localhost in production (root cause: broken build-arg chain, not just the JS fallback; verified both directions — missing var triggers fail-loud UI via Vite DCE-stripped conditional, present var bakes in correctly; R-R5-11 frontend test-infra gap logged separately) | Y |
 | A-P3-07 | P3-api-contract.md | MEDIUM | PENDING | PaymentListView.post() has no input validation/serializer | - |
 | A-P3-08 | P3-api-contract.md | MEDIUM | PENDING | WhatsApp URL built with unencoded student name — potential XSS | - |
 | A-P4-04 | P4-incomplete.md | MEDIUM | PENDING | celery_app.py.todo — Celery not implemented | - |
@@ -133,6 +133,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | R-R5-08 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | IMPROVE: PWA — manifest.json + service worker | - |
 | R-R5-09 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | IMPROVE: API versioning — add /api/v1/ prefix | - |
 | R-R5-10 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | IMPROVE: Tailwind design system — extract shared Button/Card/Modal components | - |
+| R-R5-11 | frontend | FAST-FOLLOW | PENDING | ADD: Frontend Test Infrastructure (Jest/Vitest) — no test runner or tests currently exist for React components | - |
 | **LATER — Roadmap** | | | | | |
 | R-R1-11 | R1-domain-gaps.md | LATER | DECISION NEEDED | ADD: Class session recording (LiveKit egress → S3 → HLS) | - |
 | R-R1-12 | R1-domain-gaps.md | LATER | DECISION NEEDED | ADD: Gamification — streaks, badges, leaderboard | - |

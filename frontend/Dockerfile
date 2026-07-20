@@ -16,6 +16,8 @@ COPY . .
 # VITE_API_BASE_URL must be set at build time (passed as --build-arg or in compose)
 ARG VITE_API_BASE_URL=http://localhost:8000/api/
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ARG VITE_LIVEKIT_URL
+ENV VITE_LIVEKIT_URL=${VITE_LIVEKIT_URL}
 RUN npm run build
 
 
