@@ -92,7 +92,24 @@ services:
     networks:
       - quranific_net
 
-  # ── 5. React/Vite Frontend ───────────────────────────────────────────────────
+  # ── 5. Celery Worker ─────────────────────────────────────────────────────────
+  celery_worker:
+    container_name: quranific_celery_worker
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A config worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - quranific_net
+
+  # ── 6. React/Vite Frontend ───────────────────────────────────────────────────
   frontend:
     container_name: quranific_frontend
     build:

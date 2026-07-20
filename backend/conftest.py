@@ -59,6 +59,9 @@ def disable_throttling(settings):
         'DEFAULT_THROTTLE_CLASSES': [],
         'DEFAULT_THROTTLE_RATES': {},
     }
+    
+    # Phase 2: Force Celery eager mode during testing to avoid needing a live worker
+    settings.CELERY_TASK_ALWAYS_EAGER = True
 
 
 def _get_token(username, password="TestPass123!"):

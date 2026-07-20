@@ -362,3 +362,14 @@ if not DEBUG and _sentry_dsn:
         # Suppress noisy Sentry SDK debug output
         debug=False,
     )
+
+# ---------------------------------------------------------------------------
+# CELERY & REDIS (R-R3-01 / A-P4-04)
+# ---------------------------------------------------------------------------
+_redis_url = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+# Change the db index from 0 to 1 for celery to avoid cache collision (R-R3-04)
+_celery_redis_url = _redis_url.rsplit('/', 1)[0] + '/1'
+
+CELERY_BROKER_URL = _celery_redis_url
+CELERY_RESULT_BACKEND = _celery_redis_url
+CELERY_TASK_ALWAYS_EAGER = os.environ.get('CELERY_TASK_ALWAYS_EAGER', 'False').lower() in ('true', '1', 'yes')

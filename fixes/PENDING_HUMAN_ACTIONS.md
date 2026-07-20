@@ -35,6 +35,7 @@ Update this file as each action is completed.
 | H-OCI-03 | A-P2-04 | HIGH | **PENDING** | Run `python manage.py migrate` — includes payment unique constraint migration `0003_add_unique_payment_per_student_per_month`. | — |
 | H-OCI-04 | A-P7-04 | HIGH | **PENDING** | Run `docker compose build` then `docker compose up -d` after all credentials are set. Confirm CRITICAL LiveKit log does not appear in `docker compose logs live_session`. | — |
 | H-OCI-05 | A-P4-03 | MEDIUM | **PENDING** | Add GitHub Actions secrets (`DJANGO_SECRET_KEY`, `LIVEKIT_API_KEY`, etc.) so the CI pipeline can run the backend job. | — |
+| H-CI-01 | R-R3-01 | MEDIUM | **PENDING** | **CI test gap:** The current CI pipeline only verifies Celery task logic using `CELERY_TASK_ALWAYS_EAGER=True`. Update the CI pipeline to run an integration check confirming the `celery_worker` container starts, connects to the Redis broker, and stays healthy. | — |
 
 ### 🗑️ Manual Removals (if not done by code fix batch)
 
