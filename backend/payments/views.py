@@ -125,15 +125,21 @@ class PaymentListView(APIView):
                     "replayed": True,   # Lets the client distinguish a replay from a fresh create
                 }, status=status.HTTP_200_OK)
 
+        from .serializers import PaymentCreateSerializer
+
+        serializer = PaymentCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            student_id = request.data.get('student')
+            student_id = serializer.validated_data['student'].id
             from students.models import Student # Local import to avoid circular dependencies
 
             # ATOMIC LOCK: Prevent race conditions when updating student status
             with transaction.atomic():
                 # Lock the specific student row until this transaction finishes
                 student = Student.objects.select_for_update().get(id=student_id)
-                month = request.data.get('month_paid_for', '')
+                month = serializer.validated_data['month_paid_for']
 
                 # DUPLICATE GUARD (A-P2-04): Check before create so the admin
                 # receives a clean 409 rather than an IntegrityError from the DB
@@ -147,9 +153,9 @@ class PaymentListView(APIView):
 
                 payment = Payment.objects.create(
                     student=student,
-                    amount=request.data.get('amount'),
+                    amount=serializer.validated_data['amount'],
                     month_paid_for=month,
-                    method=request.data.get('method', 'Manual'),
+                    method=serializer.validated_data.get('method', 'Manual'),
                     status='Paid',
                     idempotency_key=idem_key,   # None if not provided — stored as NULL
                 )

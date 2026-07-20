@@ -280,6 +280,97 @@ class TestPaymentCreate:
             f"Expected 1 payment row after race recovery, found {total_rows}."
         )
 
+    def test_payment_creation_with_missing_required_fields_returns_400(self):
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        # Missing 'student', 'amount', 'month_paid_for'
+        payload = {"method": "Manual"}
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.count() == 0
+
+    def test_payment_creation_with_non_existent_student_returns_400(self):
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        payload = {
+            "student": 999999,
+            "amount": "60.00",
+            "month_paid_for": "2026-08",
+            "method": "Manual",
+        }
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.count() == 0
+
+    def test_payment_creation_with_non_numeric_amount_returns_400(self):
+        student = StudentFactory()
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        payload = {
+            "student": student.id,
+            "amount": "abc",
+            "month_paid_for": "2026-08",
+            "method": "Manual",
+        }
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.filter(student=student).count() == 0
+
+    def test_payment_creation_with_zero_amount_returns_400(self):
+        student = StudentFactory()
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        payload = {
+            "student": student.id,
+            "amount": "0.00",
+            "month_paid_for": "2026-08",
+            "method": "Manual",
+        }
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.filter(student=student).count() == 0
+
+    def test_payment_creation_with_negative_amount_returns_400(self):
+        student = StudentFactory()
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        payload = {
+            "student": student.id,
+            "amount": "-10.00",
+            "month_paid_for": "2026-08",
+            "method": "Manual",
+        }
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.filter(student=student).count() == 0
+
+    def test_payment_creation_with_malformed_month_returns_400(self):
+        student = StudentFactory()
+        owner_user = OwnerUserFactory()
+        client = _login(owner_user.username)
+        payload = {
+            "student": student.id,
+            "amount": "50.00",
+            "month_paid_for": "2026/08", # malformed
+            "method": "Manual",
+        }
+        
+        response = client.post("/api/payments/", payload, format="json")
+        assert response.status_code == 400
+        from payments.models import Payment as PaymentModel
+        assert PaymentModel.objects.filter(student=student).count() == 0
+
+
 
 @pytest.mark.django_db
 class TestPaymentList:
