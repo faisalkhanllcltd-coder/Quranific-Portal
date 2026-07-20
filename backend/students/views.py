@@ -136,18 +136,24 @@ class StudentViewSet(RecoveryVaultMixin, viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Validate parent if provided, before creating anything
+        parent_user = None
+        if parent_id:
+            try:
+                parent_user = User.objects.get(id=parent_id, profile__user_type='parent')
+            except User.DoesNotExist:
+                return Response(
+                    {"error": f"Invalid parent_account_id '{parent_id}'. No such parent account exists."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         student = serializer.save()
 
         # Link parent if provided
-        if parent_id:
-            try:
-                parent_user = User.objects.get(id=parent_id, profile__user_type='parent')
-                student.parent_account = parent_user
-            except User.DoesNotExist:
-                # Silently fail or log it; the student is still created.
-                pass
+        if parent_user:
+            student.parent_account = parent_user
 
         user = User.objects.create_user(
             username=username,
