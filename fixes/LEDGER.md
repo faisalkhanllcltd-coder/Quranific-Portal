@@ -66,7 +66,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P4-05 | P4-incomplete.md | MEDIUM | **WONTFIX-FOR-NOW** | No FileField/ImageField exists in codebase. Revisit when file-upload features (R-R1-06, R-R1-11, profile photos) are designed. | Y - Verified via codebase audit |
 | A-P4-06 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R5-01 (Sentry) — fixed there | Y |
 | A-P4-07 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R2-03 (reset_pw.py hardened) — fixed there | Y |
-| A-P5-02 | P5-ux-a11y.md | MEDIUM | PENDING | No global ErrorBoundary wrapping route tree | - |
+| A-P5-02 | P5-ux-a11y.md | MEDIUM | **FIXED** | Added global class-based ErrorBoundary wrapping Route tree. Includes location-based reset on navigation, dev/prod fallback split, and Sentry fast-follow comment. Upgraded fallback UI's "Go to Dashboard" button from a hard `window.location.replace` reload to a real client-side `navigate()` call. | Y — verified via real Puppeteer clicks (crash → fallback → button click → confirmed soft recovery, no page reload) |
 | A-P5-03 | P5-ux-a11y.md | MEDIUM | PENDING | No per-page document.title updates | - |
 | A-P5-04 | P5-ux-a11y.md | MEDIUM | PENDING | No ARIA labels on icon-only action buttons | - |
 | A-P5-05 | P5-ux-a11y.md | MEDIUM | PENDING | WhatsApp number field has no format validation | - |

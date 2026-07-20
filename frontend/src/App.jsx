@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import RoleRoute from './components/RoleRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // ── EDGE-LIGHTWEIGHT ROUTING (Code Splitting) ──────────────────────────────
 // By wrapping these in React.lazy, we ensure the browser only downloads the 
@@ -50,123 +51,125 @@ const PageLoader = () => (
 function App() {
   return (
     <BrowserRouter>
-      {/* The global Suspense boundary catches any lazy-loaded component
-        and renders the PageLoader until the chunk is ready. 
-      */}
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* ── PUBLIC ROUTES ── */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
+      <ErrorBoundary>
+        {/* The global Suspense boundary catches any lazy-loaded component
+          and renders the PageLoader until the chunk is ready. 
+        */}
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* ── PUBLIC ROUTES ── */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* ── FULL-SCREEN CLASSROOM (No Sidebar) ── */}
-          <Route
-            path="/classroom/:roomName"
-            element={
-              <ProtectedRoute>
-                <Classroom />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* ── PRIVATE PORTAL (With Layout/Sidebar) ── */}
-          <Route
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            {/* Universal Routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/assignments" element={<Assignments />} />
-            <Route path="/library" element={<Library />} />
-
-            {/* ── COMMAND HUBS ── */}
+            {/* ── FULL-SCREEN CLASSROOM (No Sidebar) ── */}
             <Route
-              path="/admin"
+              path="/classroom/:roomName"
               element={
-                <RoleRoute allowedRoles={SUPER_ADMIN_ROLES}>
-                  <AdminHub />
-                </RoleRoute>
-              }
-            />
-            {/* Legacy Sidebar Redirects to Admin Hub */}
-            <Route path="/admin-console" element={<Navigate to="/admin" replace />} />
-            <Route path="/system-logs" element={<Navigate to="/admin" replace />} />
-            <Route path="/recovery-vault" element={<Navigate to="/admin" replace />} />
-
-            <Route
-              path="/finance"
-              element={
-                <RoleRoute allowedRoles={FINANCE_ROLES}>
-                  <FinanceHub />
-                </RoleRoute>
-              }
-            />
-            {/* Legacy Sidebar Redirects to Finance Hub */}
-            <Route path="/financials" element={<Navigate to="/finance" replace />} />
-            <Route path="/payroll" element={<Navigate to="/finance" replace />} />
-
-            <Route
-              path="/analytics"
-              element={
-                <RoleRoute allowedRoles={SUPER_ADMIN_ROLES}>
-                  <Analytics />
-                </RoleRoute>
+                <ProtectedRoute>
+                  <Classroom />
+                </ProtectedRoute>
               }
             />
 
-            {/* ── DIRECTORIES (Self-contained Creation Drawers) ── */}
+            {/* ── PRIVATE PORTAL (With Layout/Sidebar) ── */}
             <Route
-              path="/students"
               element={
-                <RoleRoute allowedRoles={ALL_STAFF}>
-                  <StudentList />
-                </RoleRoute>
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
               }
-            />
-            <Route
-              path="/all-students"
-              element={
-                <RoleRoute allowedRoles={ALL_STAFF}>
-                  <StudentList />
-                </RoleRoute>
-              }
-            />
-            <Route
-              path="/students/:id"
-              element={
-                <RoleRoute allowedRoles={ALL_STAFF}>
-                  <StudentProfile />
-                </RoleRoute>
-              }
-            />
+            >
+              {/* Universal Routes */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/assignments" element={<Assignments />} />
+              <Route path="/library" element={<Library />} />
 
-            <Route
-              path="/staff"
-              element={
-                <RoleRoute allowedRoles={STAFF_ROLES}>
-                  <Staff />
-                </RoleRoute>
-              }
-            />
-            <Route
-              path="/staff/:id"
-              element={
-                <RoleRoute allowedRoles={STAFF_ROLES}>
-                  <TeacherProfile />
-                </RoleRoute>
-              }
-            />
-          </Route>
+              {/* ── COMMAND HUBS ── */}
+              <Route
+                path="/admin"
+                element={
+                  <RoleRoute allowedRoles={SUPER_ADMIN_ROLES}>
+                    <AdminHub />
+                  </RoleRoute>
+                }
+              />
+              {/* Legacy Sidebar Redirects to Admin Hub */}
+              <Route path="/admin-console" element={<Navigate to="/admin" replace />} />
+              <Route path="/system-logs" element={<Navigate to="/admin" replace />} />
+              <Route path="/recovery-vault" element={<Navigate to="/admin" replace />} />
 
-          {/* 404 FALLBACK */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </Suspense>
+              <Route
+                path="/finance"
+                element={
+                  <RoleRoute allowedRoles={FINANCE_ROLES}>
+                    <FinanceHub />
+                  </RoleRoute>
+                }
+              />
+              {/* Legacy Sidebar Redirects to Finance Hub */}
+              <Route path="/financials" element={<Navigate to="/finance" replace />} />
+              <Route path="/payroll" element={<Navigate to="/finance" replace />} />
+
+              <Route
+                path="/analytics"
+                element={
+                  <RoleRoute allowedRoles={SUPER_ADMIN_ROLES}>
+                    <Analytics />
+                  </RoleRoute>
+                }
+              />
+
+              {/* ── DIRECTORIES (Self-contained Creation Drawers) ── */}
+              <Route
+                path="/students"
+                element={
+                  <RoleRoute allowedRoles={ALL_STAFF}>
+                    <StudentList />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/all-students"
+                element={
+                  <RoleRoute allowedRoles={ALL_STAFF}>
+                    <StudentList />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/students/:id"
+                element={
+                  <RoleRoute allowedRoles={ALL_STAFF}>
+                    <StudentProfile />
+                  </RoleRoute>
+                }
+              />
+
+              <Route
+                path="/staff"
+                element={
+                  <RoleRoute allowedRoles={STAFF_ROLES}>
+                    <Staff />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/staff/:id"
+                element={
+                  <RoleRoute allowedRoles={STAFF_ROLES}>
+                    <TeacherProfile />
+                  </RoleRoute>
+                }
+              />
+            </Route>
+
+            {/* 404 FALLBACK */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

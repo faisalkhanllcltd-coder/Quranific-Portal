@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 /**
  * ErrorBoundary — Global React crash handler.
@@ -10,10 +11,10 @@ import { Component } from 'react';
  * This is a class component because React does not yet support
  * componentDidCatch / getDerivedStateFromError via hooks.
  */
-export default class ErrorBoundary extends Component {
+class ErrorBoundaryInner extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, refId: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -21,22 +22,37 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    const refId = Math.random().toString(36).substring(2, 9).toUpperCase();
+    this.setState({ refId });
+    // In production, log the reference ID with the error
+    console.error(`[ErrorBoundary] Reference ID: ${refId}`);
     console.error('[ErrorBoundary] Uncaught error:', error);
     console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+    
+    // FAST-FOLLOW: wire caught frontend errors into Sentry once frontend SDK is added
+  }
+
+  componentDidUpdate(prevProps) {
+    // Reset the error boundary if the user navigates away
+    if (this.state.hasError && this.props.location !== prevProps.location) {
+      this.setState({ hasError: false, error: null, refId: null });
+    }
   }
 
   handleReload = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, refId: null });
     window.location.reload();
   };
 
   handleGoHome = () => {
-    this.setState({ hasError: false, error: null });
-    window.location.replace('/dashboard');
+    this.setState({ hasError: false, error: null, refId: null });
+    this.props.navigate('/dashboard');
   };
 
   render() {
     if (this.state.hasError) {
+      const isDev = import.meta.env.DEV;
+
       return (
         <div style={{
           minHeight: '100vh',
@@ -52,7 +68,7 @@ export default class ErrorBoundary extends Component {
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '2rem',
             padding: '3rem',
-            maxWidth: '28rem',
+            maxWidth: '32rem',
             width: '100%',
             textAlign: 'center',
             backdropFilter: 'blur(20px)',
@@ -87,30 +103,62 @@ export default class ErrorBoundary extends Component {
               color: '#94a3b8',
               fontSize: '0.875rem',
               lineHeight: 1.6,
-              marginBottom: '2rem',
+              marginBottom: '1.5rem',
             }}>
               An unexpected error occurred. Your data is safe. Please try reloading the page.
             </p>
 
-            {/* Error detail (collapsed for production) */}
-            {this.state.error && (
+            {/* Production reference ID */}
+            {!isDev && this.state.refId && (
+              <div style={{
+                background: 'rgba(255,255,255,0.05)',
+                borderRadius: '0.75rem',
+                padding: '0.75rem',
+                marginBottom: '2rem',
+                display: 'inline-block',
+                border: '1px dashed rgba(255,255,255,0.2)'
+              }}>
+                <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Reference ID: </span>
+                <span style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: 600, fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                  {this.state.refId}
+                </span>
+              </div>
+            )}
+
+            {/* Development Error detail */}
+            {isDev && this.state.error && (
               <div style={{
                 background: 'rgba(239, 68, 68, 0.08)',
                 border: '1px solid rgba(239, 68, 68, 0.15)',
                 borderRadius: '0.75rem',
-                padding: '0.75rem 1rem',
-                marginBottom: '1.5rem',
+                padding: '1rem',
+                marginBottom: '2rem',
                 textAlign: 'left',
+                maxHeight: '300px',
+                overflowY: 'auto'
               }}>
                 <p style={{
                   color: '#f87171',
-                  fontSize: '0.7rem',
+                  fontSize: '0.8rem',
                   fontFamily: 'monospace',
+                  fontWeight: 'bold',
+                  marginBottom: '0.5rem',
                   wordBreak: 'break-word',
                   margin: 0,
                 }}>
                   {this.state.error.toString()}
                 </p>
+                {this.state.error.stack && (
+                  <pre style={{
+                    color: '#fca5a5',
+                    fontSize: '0.7rem',
+                    fontFamily: 'monospace',
+                    whiteSpace: 'pre-wrap',
+                    marginTop: '0.5rem'
+                  }}>
+                    {this.state.error.stack}
+                  </pre>
+                )}
               </div>
             )}
 
@@ -173,4 +221,10 @@ export default class ErrorBoundary extends Component {
 
     return this.props.children;
   }
+}
+
+export default function ErrorBoundary(props) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  return <ErrorBoundaryInner location={location.pathname} navigate={navigate} {...props} />;
 }
