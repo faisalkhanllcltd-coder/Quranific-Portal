@@ -86,7 +86,8 @@ export default function TeacherProfile() {
         <div className="flex items-center gap-5">
           <button 
             onClick={() => navigate('/staff')} 
-            className="p-3 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 rounded-2xl transition shadow-sm hover:shadow-md"
+            className="p-3 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 rounded-2xl transition shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+            aria-label="Back to staff list"
           >
             <ArrowLeft size={22} />
           </button>

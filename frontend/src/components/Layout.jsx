@@ -246,6 +246,7 @@ export default function Layout() {
       )}
       <div className={`fixed inset-y-0 left-0 w-[280px] max-w-[80vw] bg-emerald-950 z-50 transform-gpu transition-transform duration-300 ease-out md:hidden shadow-2xl border-r border-emerald-800 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <button
+          aria-label="Close mobile menu"
           onClick={() => setIsMobileMenuOpen(false)}
           className="absolute top-6 right-4 text-emerald-400 hover:text-white p-2 z-50 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
@@ -269,6 +270,7 @@ export default function Layout() {
         <header className={`h-20 flex items-center justify-between px-6 md:px-10 sticky top-0 z-30 transition-all duration-300 transform-gpu ${isScrolled ? 'bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm' : 'bg-transparent'}`}>
           <div className="flex items-center gap-4">
             <button
+              aria-label="Open mobile menu"
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden p-2 text-emerald-800 hover:bg-emerald-100 rounded-xl transition-colors shadow-sm bg-white/80 border border-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >

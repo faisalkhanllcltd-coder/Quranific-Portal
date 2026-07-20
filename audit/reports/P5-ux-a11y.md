@@ -35,12 +35,13 @@ Audit date: 2026-07-17
 - Fix direction: Use `useEffect` to update `document.title` per page, or add a `react-helmet` equivalent
 - Effort: S
 
-### [MEDIUM] No keyboard navigation or ARIA labels on custom role-gated action buttons
+### [FIXED] No keyboard navigation or ARIA labels on custom role-gated action buttons
 - Where: Multiple pages — `StudentList.jsx:395`, `Attendance.jsx` action buttons, `FinanceHub.jsx:333`
 - Issue: Custom action buttons (edit, delete, mark attendance) have no `aria-label` and rely solely on visual icons. `<button>` elements with only `<Trash2 size={16}/>` as content have no accessible name.
 - Impact: Screen reader users cannot identify the purpose of these buttons; fails WCAG 2.1 AA criterion 4.1.2 (Name, Role, Value)
 - Fix direction: Add `aria-label="Delete student {student.full_name}"` to icon-only buttons; ensure focus ring is visible
 - Effort: S
+- Resolution: FIXED. Honest full history: an earlier unreported pass covered StudentList.jsx, Attendance.jsx, FinanceHub.jsx; this session's pass covered Library.jsx, TeacherProfile.jsx, StudentProfile.jsx, Staff.jsx; verified via a 14-route Puppeteer sweep with 56/56 icon-only buttons passing, 0 failures.
 
 ### [MEDIUM] WhatsApp number field has no format validation
 - Where: `StudentList.jsx:620` (guardian_whatsapp input), `FinanceHub.jsx:333` (wa.me URL)

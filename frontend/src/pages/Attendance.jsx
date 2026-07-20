@@ -172,8 +172,9 @@ export default function Attendance() {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={loadDailyRollCall}
-            className="p-2.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-200"
+            className="p-2.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             title="Sync Data"
+            aria-label="Sync Data"
           >
             <RefreshCw size={18} />
           </button>

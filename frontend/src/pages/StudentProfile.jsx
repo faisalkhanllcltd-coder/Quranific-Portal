@@ -135,7 +135,8 @@ export default function StudentProfile() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <button
             onClick={() => navigate('/all-students')}
-            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all shadow-sm w-fit shrink-0"
+            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all shadow-sm w-fit shrink-0 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            aria-label="Back to students list"
           >
             <ArrowLeft size={20} />
           </button>

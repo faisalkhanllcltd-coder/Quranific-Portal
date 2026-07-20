@@ -420,22 +420,22 @@ export default function StudentList() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         {!isOwnerOrManager && (
-                          <button onClick={(e) => { e.stopPropagation(); navigate('/attendance'); }} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Mark Attendance">
+                          <button onClick={(e) => { e.stopPropagation(); navigate('/attendance'); }} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500" title="Mark Attendance" aria-label={`Mark ${student.full_name} present`}>
                             <CalendarCheck size={18} />
                           </button>
                         )}
                         {isOwnerOrManager && (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); navigate(`/students/${student.id}`); }} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Edit Profile">
+                            <button onClick={(e) => { e.stopPropagation(); navigate(`/students/${student.id}`); }} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500" title="Edit Profile" aria-label={`Edit ${student.full_name}'s profile`}>
                               <Edit size={16} />
                             </button>
-                            <button onClick={(e) => confirmDelete(e, student)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Remove Student">
+                            <button onClick={(e) => confirmDelete(e, student)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500" title="Remove Student" aria-label={`Delete student ${student.full_name}`}>
                               <Trash2 size={16} />
                             </button>
                           </>
                         )}
                         <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block"></div>
-                        <button className="p-2 text-slate-400 group-hover:text-slate-800 transition-colors">
+                        <button className="p-2 text-slate-400 group-hover:text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500" aria-label={`View ${student.full_name}'s profile`}>
                           <ChevronRight size={18} />
                         </button>
                       </div>
@@ -452,7 +452,7 @@ export default function StudentList() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative animate-in zoom-in-95 duration-200 text-center">
-            <button onClick={() => setShowDeleteModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><X size={20} /></button>
+            <button onClick={() => setShowDeleteModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close delete modal"><X size={20} /></button>
             <div className="h-16 w-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-200">
               <AlertTriangle size={32} />
             </div>
@@ -484,7 +484,7 @@ export default function StudentList() {
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Enroll New Student</h2>
               <p className="text-slate-500 text-xs sm:text-sm mt-1">Configure profile details, family links, and portal access.</p>
             </div>
-            <button onClick={closeDrawer} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors">
+            <button onClick={closeDrawer} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500" aria-label="Close drawer">
               <X size={24} />
             </button>
           </div>

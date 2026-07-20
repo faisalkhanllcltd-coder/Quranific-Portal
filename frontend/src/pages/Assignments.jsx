@@ -231,10 +231,10 @@ export default function Assignments() {
                     {/* SaaS Teacher Actions (Edit / Delete) */}
                     {isTeacher && (
                       <div className="absolute top-6 right-6 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => openEditAssignment(item)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors" title="Edit">
+                        <button onClick={() => openEditAssignment(item)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500" title="Edit" aria-label={`Edit assignment ${item.title}`}>
                           <Edit2 size={16} />
                         </button>
-                        <button onClick={() => confirmDelete(item)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors" title="Delete">
+                        <button onClick={() => confirmDelete(item)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500" title="Delete" aria-label={`Delete assignment ${item.title}`}>
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -351,7 +351,7 @@ export default function Assignments() {
       {showAssignmentModal && isTeacher && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setShowAssignmentModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><X size={20} /></button>
+            <button onClick={() => setShowAssignmentModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close assignment modal"><X size={20} /></button>
             <h2 className="text-xl font-bold text-slate-900 mb-1">{isEditing ? 'Edit Coursework' : 'Assign Coursework'}</h2>
             <p className="text-sm text-slate-500 mb-6">{isEditing ? 'Update the details of this assignment.' : 'Create a new task for a student.'}</p>
 
@@ -427,7 +427,7 @@ export default function Assignments() {
       {showSubmitModal && !isTeacher && activeAssignment && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setShowSubmitModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><X size={20} /></button>
+            <button onClick={() => setShowSubmitModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close submission modal"><X size={20} /></button>
             <h2 className="text-xl font-bold text-slate-900 mb-1">Turn In Homework</h2>
             <p className="text-sm text-slate-500 mb-6">Submitting work for: <strong className="text-slate-800">{activeAssignment.title}</strong></p>
 
@@ -466,7 +466,7 @@ export default function Assignments() {
       {showGradeModal && isTeacher && activeSubmission && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setShowGradeModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><X size={20} /></button>
+            <button onClick={() => setShowGradeModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close grade modal"><X size={20} /></button>
             <h2 className="text-xl font-bold text-slate-900 mb-1">Evaluate Submission</h2>
             <p className="text-sm text-slate-500 mb-6">Reviewing work from: <strong className="text-slate-800">{activeSubmission.student_name}</strong></p>
 

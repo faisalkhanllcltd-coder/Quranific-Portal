@@ -369,7 +369,7 @@ const FinancialLedgerView = () => {
       {showAddModal && isAdmin && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><X size={20} /></button>
+            <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close record payment modal"><X size={20} /></button>
             <div className="p-6 sm:p-8 border-b border-slate-100"><h2 className="text-xl font-bold text-slate-900">Record Payment</h2><p className="text-slate-500 text-sm mt-1">Log an incoming fee to the ledger.</p></div>
             <form onSubmit={handleLogPayment} className="p-6 sm:p-8 space-y-5">
               {errorMsg && (<div className="p-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-sm font-bold flex items-center gap-2"><AlertCircle size={16} className="shrink-0" /> {errorMsg}</div>)}

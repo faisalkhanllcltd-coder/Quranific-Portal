@@ -261,7 +261,7 @@ export default function Staff() {
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Onboard New Ustad</h2>
               <p className="text-slate-500 text-xs sm:text-sm mt-1">Provision a new teacher account and configure access.</p>
             </div>
-            <button onClick={closeDrawer} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors">
+            <button onClick={closeDrawer} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500" aria-label="Close drawer">
               <X size={24} />
             </button>
           </div>

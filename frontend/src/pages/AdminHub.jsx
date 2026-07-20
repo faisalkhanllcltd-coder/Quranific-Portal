@@ -99,7 +99,7 @@ const AdminOverview = ({ setActiveTab, navigate }) => {
                     <form onSubmit={handleStudentSearch} className="relative">
                         <input type="text" placeholder="Find student to overwrite credentials..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-inner placeholder:text-slate-400" />
                         <Search className="absolute left-4 top-4 text-slate-400" size={18} />
-                        <button type="submit" className="absolute right-2 top-2 p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 font-bold transition-colors">
+                        <button type="submit" className="absolute right-2 top-2 p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500" aria-label="Search student to overwrite">
                             <UserCog size={16} />
                         </button>
                     </form>
@@ -270,7 +270,7 @@ const SystemLogsView = () => {
                                             <td className="px-6 py-4"><div className="flex items-center gap-2.5"><Clock size={14} className="text-slate-400" /><span className="text-slate-700 text-xs font-mono font-bold uppercase">{new Date(log.timestamp).toLocaleString(undefined, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span></div></td>
                                             <td className="px-6 py-4"><span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${theme.color}`}>{theme.icon}{log.action}</span></td>
                                             <td className="px-6 py-4"><div className="text-slate-900 text-sm font-semibold leading-relaxed truncate max-w-md">{log.details}</div></td>
-                                            <td className="px-6 py-4 text-right"><button className="p-2 text-slate-400 group-hover:text-emerald-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm"><Eye size={16} /></button></td>
+                                            <td className="px-6 py-4 text-right"><button className="p-2 text-slate-400 group-hover:text-emerald-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" aria-label="Inspect log details"><Eye size={16} /></button></td>
                                         </tr>
                                     );
                                 })
@@ -290,7 +290,7 @@ const SystemLogsView = () => {
                         <div className="bg-slate-900 p-6 flex items-center gap-3">
                             <Terminal size={20} className="text-emerald-400" />
                             <h2 className="text-lg font-black text-white tracking-widest uppercase">Forensic Inspector</h2>
-                            <button onClick={() => setSelectedLog(null)} className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors"><X size={20} /></button>
+                            <button onClick={() => setSelectedLog(null)} className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg" aria-label="Close Inspector"><X size={20} /></button>
                         </div>
                         <div className="p-6 bg-[#0f172a] text-emerald-400 font-mono text-sm space-y-4">
                             <div><span className="text-slate-500 text-xs font-bold uppercase tracking-widest block mb-1">Event ID</span><span className="text-white bg-white/10 px-2 py-0.5 rounded">#{selectedLog.id}</span></div>
@@ -519,7 +519,7 @@ const RecoveryVaultView = () => {
             {showRestoreModal && (
                 <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-in fade-in duration-200">
                     <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative animate-in zoom-in-95 duration-200 text-center">
-                        <button onClick={() => setShowRestoreModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 transition-colors"><X size={20} /></button>
+                        <button onClick={() => setShowRestoreModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg" aria-label="Close restore modal"><X size={20} /></button>
                         <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
                             <RefreshCcw size={32} />
                         </div>
