@@ -54,7 +54,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | **MEDIUM — Audit** | | | | | |
 | A-HARDEN-01 | accounts/views.py | MEDIUM | **FIXED** | Added explicit allowlist of 5 fields to `MyProfileView.patch()`. Rejects extra keys with 400 Bad Request to prevent silent field injection. | Y — verified via test_manager_cannot_patch_invalid_profile_fields |
 | A-P1-09 | P1-security.md | MEDIUM | **FIXED** | Fail-secure `get_serializer_class` inversion (only owner/head_manager get full `StudentSerializer`); added `StudentManagerSerializer` with structural/academic fields set to `read_only_fields`; added explicit `.validate()` override that rejects requests containing restricted fields with a 400 Bad Request instead of silently dropping them. | Y — verified against 60-passed run; teacher/student 403 intact; manager 400 confirmed |
-| A-P1-10 | P1-security.md | MEDIUM | PENDING | CreateDynamicRoomView getattr on missing profile raises 500 | - |
+| A-P1-10 | P1-security.md | MEDIUM | **FIXED** | `CreateDynamicRoomView` updated to use `hasattr(request.user, 'profile')` pattern (matching A-P1-09); profile-less users now explicitly rejected with 403 instead of falling through to a 'student' default or crashing with a 500. Edge-case is confirmed unreachable in normal flow due to `accounts.models` `post_save` signal ensuring profiles exist. | Y — verified via 61-passed run; 403 edge-case test confirmed |
 | A-P1-11 | P1-security.md | MEDIUM | PENDING | LiveKitWebhookView AllowAny — no IP restriction | - |
 | A-P2-06 | P2-data-backend.md | MEDIUM | PENDING | StudentViewSet.create() silently ignores failed parent_id lookup | - |
 | A-P2-07 | P2-data-backend.md | MEDIUM | PENDING | SystemLog has no DB-level immutability protection | - |
