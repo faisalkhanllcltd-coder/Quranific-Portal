@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -546,6 +547,7 @@ const RecoveryVaultView = () => {
 // MASTER HUB EXPORT
 // ─────────────────────────────────────────────────────────────────────────────
 export default function AdminHub() {
+  useDocumentTitle('Admin Hub');
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
 

@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function StudentProfile() {
+  useDocumentTitle('Student Profile');
   const { id } = useParams();
   const navigate = useNavigate();
 

@@ -11,6 +11,7 @@ import { ConnectionState } from 'livekit-client';
 import '@livekit/components-styles';
 import api from '../api';
 import { Video, LogOut, AlertCircle, RefreshCw, Shield, Loader2, Wifi } from 'lucide-react';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 // ── CONFIG ─────────────────────────────────────────────────────────────────
 // IMPORTANT: Ensure VITE_LIVEKIT_URL is set in your frontend/.env file!
@@ -104,6 +105,7 @@ function ClassroomHeader({ roomName }) {
 
 // ── MAIN CLASSROOM COMPONENT ──────────────────────────────────────────────
 export default function Classroom() {
+  useDocumentTitle('Classroom');
   const { roomName } = useParams();
   const navigate = useNavigate();
 

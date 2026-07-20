@@ -5,6 +5,7 @@ import OwnerDashboard from './dashboards/OwnerDashboard';
 import TeacherDashboard from './dashboards/TeacherDashboard';
 import StudentDashboard from './dashboards/StudentDashboard';
 import ParentDashboard from './dashboards/ParentDashboard';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Dashboard — Secure Master Role Router (0-Latency Edition)
@@ -14,6 +15,7 @@ import ParentDashboard from './dashboards/ParentDashboard';
  * to render the correct workspace with exactly zero milliseconds of delay.
  */
 export default function Dashboard() {
+  useDocumentTitle('Dashboard');
   // ── 1. SYNCHRONOUS ROLE EVALUATION ──
   const token = localStorage.getItem('access');
   const role = (localStorage.getItem('user_type') || 'student').toLowerCase();

@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function Analytics() {
+  useDocumentTitle('Analytics');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [metrics, setMetrics] = useState({

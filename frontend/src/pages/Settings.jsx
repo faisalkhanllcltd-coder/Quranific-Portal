@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import api from '../api';
 import {
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function Settings() {
+  useDocumentTitle('Settings');
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' | 'security' | 'access'
   const [msg, setMsg] = useState({ type: '', text: '' });
 

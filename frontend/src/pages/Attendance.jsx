@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import api from '../api';
 import {
@@ -45,6 +46,7 @@ const STATUS_BADGE = {
 };
 
 export default function Attendance() {
+  useDocumentTitle('Attendance');
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState({});

@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import React, { useState, useEffect, useMemo } from 'react';
 import api from '../api';
 import {
@@ -547,6 +548,7 @@ const PayrollEngineView = () => {
 // MASTER HUB EXPORT
 // ─────────────────────────────────────────────────────────────────────────────
 export default function FinanceHub() {
+  useDocumentTitle('Finance Hub');
   const [activeTab, setActiveTab] = useState('ledger');
   const userType = (localStorage.getItem('user_type') || 'student').toLowerCase();
 

@@ -1,12 +1,14 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { 
+import {
   User, CreditCard, Edit2, Save,
   ArrowLeft, CheckCircle, Clock, Users, DollarSign
 } from 'lucide-react';
 
 export default function TeacherProfile() {
+  useDocumentTitle('Teacher Profile');
   const { id } = useParams();
   const navigate = useNavigate();
   

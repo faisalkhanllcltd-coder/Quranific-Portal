@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
 import api from '../api';
 import {
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function Library() {
+  useDocumentTitle('Library');
   const [materials, setMaterials] = useState([]);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);

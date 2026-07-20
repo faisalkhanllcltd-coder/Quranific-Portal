@@ -1,3 +1,4 @@
+import useDocumentTitle from '../hooks/useDocumentTitle';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 
 export default function StudentList() {
+  useDocumentTitle('Students');
   const navigate = useNavigate();
 
   // ── CORE STATES ──

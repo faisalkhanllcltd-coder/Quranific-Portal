@@ -67,7 +67,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P4-06 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R5-01 (Sentry) — fixed there | Y |
 | A-P4-07 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R2-03 (reset_pw.py hardened) — fixed there | Y |
 | A-P5-02 | P5-ux-a11y.md | MEDIUM | **FIXED** | Added global class-based ErrorBoundary wrapping Route tree. Includes location-based reset on navigation, dev/prod fallback split, and Sentry fast-follow comment. Upgraded fallback UI's "Go to Dashboard" button from a hard `window.location.replace` reload to a real client-side `navigate()` call. | Y — verified via real Puppeteer clicks (crash → fallback → button click → confirmed soft recovery, no page reload) |
-| A-P5-03 | P5-ux-a11y.md | MEDIUM | PENDING | No per-page document.title updates | - |
+| A-P5-03 | P5-ux-a11y.md | MEDIUM | **FIXED** | Added `useDocumentTitle` hook to all 14 routes. *Honest account*: Initial injection script corrupted imports in 11/14 files; repaired them with a second script, rebuilt clean, and verified all 14 individually via Puppeteer with a mocked API. | Y — Verified via clean `npm run build` and Puppeteer traversal of all 14 routes |
 | A-P5-04 | P5-ux-a11y.md | MEDIUM | PENDING | No ARIA labels on icon-only action buttons | - |
 | A-P5-05 | P5-ux-a11y.md | MEDIUM | PENDING | WhatsApp number field has no format validation | - |
 | A-P6-06 | P6-performance.md | MEDIUM | PENDING | Redis provisioned but unused — no cache backend configured | - |

@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, AlertCircle, ShieldCheck, Leaf } from 'lucide-react';
-
+import useDocumentTitle from '../hooks/useDocumentTitle';
 export default function Login() {
+  useDocumentTitle('Sign In');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
