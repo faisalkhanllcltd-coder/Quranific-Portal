@@ -43,6 +43,12 @@ The system handles students, teachers, live virtual classrooms, attendance, payr
 
 This project has an active audit and remediation pipeline. All CRITICAL and HIGH security findings from the initial audit have been resolved; MEDIUM findings are in progress. See [`audit/`](./audit/) for the full audit reports, [`roadmap/`](./roadmap/) for the feature roadmap findings, [`fixes/LEDGER.md`](./fixes/LEDGER.md) for the complete fix-by-fix history with per-item verification evidence, and [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) for a zero-context snapshot of what has been fixed, what is still open, and the operating rules for whoever continues this work.
 
+### Pre-Deploy Checklist
+
+For anyone deploying manually outside of the automated CI pipeline, the following checks are strictly required to ensure production safety:
+
+1. **Migration Drift Check**: Run `python manage.py makemigrations --check --dry-run` in the `backend/` directory. If this command exits with an error or reports that migrations are missing, **do not deploy**. You must generate and commit the missing migrations first. Deploying with migration drift will cause the production database schema to fall out of sync with the application code.
+
 ---
 
 ## 🏗 Architecture
