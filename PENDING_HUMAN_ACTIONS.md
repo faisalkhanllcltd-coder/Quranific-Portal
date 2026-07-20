@@ -10,3 +10,6 @@ If all owner accounts are accidentally locked out (e.g., forgotten passwords, in
    Syntax: python reset_pw.py <username> <new_password>
    Note: The eset_pw.py script has been updated to require explicit credentials and no longer contains hardcoded fallbacks, ensuring security.
 
+
+### Least-Privilege Application Database Role
+True grant-based DB immutability requires a dedicated least-privilege application role instead of superuser. Currently, the Django app connects to Postgres as the "postgres" superuser role (as seen in POSTGRES_USER in the actual DB connection/env). The DB trigger added for A-P2-07 provides a real but partial mitigation for SystemLog immutability, but a superuser can technically bypass triggers. A dedicated role should be created in the future.
