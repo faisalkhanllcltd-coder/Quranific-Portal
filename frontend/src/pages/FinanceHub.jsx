@@ -344,7 +344,10 @@ const FinancialLedgerView = () => {
                       )}
                     </div>
                     {isAdmin ? (
-                      <button onClick={() => window.open(`https://wa.me/${s.guardian_whatsapp?.replace(/\D/g, '')}?text=Assalamu alaikum, reminder for student ${s.full_name}'s fee for ${formatMonthDisplay(currentStrictMonth)}.`)} className="mt-6 w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm active:scale-95">
+                      <button onClick={() => {
+                        const message = `Assalamu alaikum, reminder for student ${s.full_name}'s fee for ${formatMonthDisplay(currentStrictMonth)}.`;
+                        window.open(`https://wa.me/${s.guardian_whatsapp?.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`);
+                      }} className="mt-6 w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm active:scale-95">
                         <MessageCircle size={16} /> Send WhatsApp Reminder
                       </button>
                     ) : (
