@@ -63,9 +63,9 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P3-07 | P3-api-contract.md | MEDIUM | **FIXED** | PaymentListView.post() has no input validation/serializer. serializer validation inserted between idempotency check and atomic block; fixes uncaught ValueError on bad student ID and uncaught DataError on bad amount, both previously surfacing as generic 500s; zero/negative amount now rejected; max_digits/decimal_places confirmed matching model exactly | Y — verified via full 81-passed suite |
 | A-P3-08 | P3-api-contract.md | MEDIUM | **FIXED** | WhatsApp URL built with unencoded student name. Confirmed NOT a true XSS vector (hardcoded scheme/host via window.open, user value confined to query string), reclassified as a functional message-encoding bug, fixed via encodeURIComponent(). | Y — manually verified generated URL format |
 | A-P4-04 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R3-01 — fixed there | Y |
-| A-P4-05 | P4-incomplete.md | MEDIUM | PENDING | s3_storage.py.todo — no file storage | - |
-| A-P4-06 | P4-incomplete.md | MEDIUM | PENDING | sentry.py.todo — no error monitoring | - |
-| A-P4-07 | P4-incomplete.md | MEDIUM | PENDING | reset_pw.py hardcoded superuser in project root | - |
+| A-P4-05 | P4-incomplete.md | MEDIUM | **WONTFIX-FOR-NOW** | No FileField/ImageField exists in codebase. Revisit when file-upload features (R-R1-06, R-R1-11, profile photos) are designed. | Y - Verified via codebase audit |
+| A-P4-06 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R5-01 (Sentry) — fixed there | Y |
+| A-P4-07 | P4-incomplete.md | MEDIUM | **FIXED** | Cross-filed with R-R2-03 (reset_pw.py hardened) — fixed there | Y |
 | A-P5-02 | P5-ux-a11y.md | MEDIUM | PENDING | No global ErrorBoundary wrapping route tree | - |
 | A-P5-03 | P5-ux-a11y.md | MEDIUM | PENDING | No per-page document.title updates | - |
 | A-P5-04 | P5-ux-a11y.md | MEDIUM | PENDING | No ARIA labels on icon-only action buttons | - |
