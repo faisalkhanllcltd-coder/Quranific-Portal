@@ -80,3 +80,25 @@ class TestStudentCreate:
         assert Student.objects.count() == 1
         student = Student.objects.first()
         assert student.parent_account is None
+
+    def test_student_create_with_invalid_whatsapp_returns_400(self):
+        """Creating a student with a malformed E.164 whatsapp number returns 400."""
+        owner = OwnerUserFactory(is_active=True)
+        
+        client = APIClient()
+        client.force_authenticate(user=owner)
+        
+        payload = {
+            "username": "newstudent4",
+            "password": "Password123!",
+            "full_name": "New Student 4",
+            "age": 10,
+            "guardian_name": "Test Guardian",
+            "guardian_whatsapp": "invalid123"
+        }
+        
+        assert Student.objects.count() == 0
+        response = client.post("/api/students/", payload, format="json")
+        
+        assert response.status_code == 400
+        assert Student.objects.count() == 0
