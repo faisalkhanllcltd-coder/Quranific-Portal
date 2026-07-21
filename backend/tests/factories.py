@@ -137,12 +137,12 @@ class StudentFactory(DjangoModelFactory):
     gender              = "Male"
     email               = factory.Faker("email")
     # whatsapp max_length=20 — numerify gives exactly 10 digits, safe under limit
-    whatsapp            = factory.LazyFunction(lambda: __import__('faker').Faker().numerify("##########"))
+    whatsapp            = factory.LazyFunction(lambda: __import__('faker').Faker().numerify("+1##########"))
     guardian_name       = factory.Faker("name")
     guardian_relation   = "Parent"
     guardian_email      = factory.Faker("email")
     # guardian_whatsapp max_length=20 — same constraint as whatsapp
-    guardian_whatsapp   = factory.LazyFunction(lambda: __import__('faker').Faker().numerify("##########"))
+    guardian_whatsapp   = factory.LazyFunction(lambda: __import__('faker').Faker().numerify("+1##########"))
     status              = "Joined"
     assigned_teacher    = None     # set explicitly in tests that need isolation
     parent_account      = None     # set to a ParentUserFactory() when needed

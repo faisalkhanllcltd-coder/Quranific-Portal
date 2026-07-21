@@ -1,6 +1,12 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.core.validators import RegexValidator
+
+phone_validator = RegexValidator(
+    regex=r'^\+[1-9]\d{1,14}$',
+    message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+)
 
 # ==========================================
 # 🛡️ THE RECOVERY VAULT: Soft Delete Engine
@@ -74,7 +80,7 @@ class Student(SoftDeleteModel):
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')], default='Male')
     age = models.IntegerField()
     email = models.EmailField(blank=True, null=True)
-    whatsapp = models.CharField(max_length=20, blank=True, null=True)
+    whatsapp = models.CharField(max_length=20, blank=True, null=True, validators=[phone_validator])
     
     # --- Class Info ---
     class_timing = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. 5:00 PM - 6:00 PM")
@@ -97,7 +103,7 @@ class Student(SoftDeleteModel):
     country = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     guardian_email = models.EmailField(blank=True, null=True)
-    guardian_whatsapp = models.CharField(max_length=20)
+    guardian_whatsapp = models.CharField(max_length=20, validators=[phone_validator])
 
     created_at = models.DateTimeField(auto_now_add=True)
 

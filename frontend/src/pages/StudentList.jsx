@@ -644,7 +644,7 @@ export default function StudentList() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp</label>
-                      <input name="whatsapp" type="text" value={formData.whatsapp} onChange={handleFormChange} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                      <input name="whatsapp" type="text" value={formData.whatsapp} onChange={handleFormChange} pattern="^\+[1-9]\d{1,14}$" title="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed." className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                     </div>
                   </div>
                 </div>
@@ -702,7 +702,7 @@ export default function StudentList() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp <span className="text-red-500">*</span></label>
-                      <input name="guardian_whatsapp" type="text" required value={formData.guardian_whatsapp} onChange={handleFormChange} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                      <input name="guardian_whatsapp" type="text" required value={formData.guardian_whatsapp} onChange={handleFormChange} pattern="^\+[1-9]\d{1,14}$" title="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed." className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
