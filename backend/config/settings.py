@@ -162,6 +162,22 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ---------------------------------------------------------------------------
+# CACHE CONFIGURATION
+# ---------------------------------------------------------------------------
+_cache_redis_url = _redis_url.rsplit('/', 1)[0] + '/2'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': _cache_redis_url,
+        'OPTIONS': {
+            'IGNORE_EXCEPTIONS': True,
+        }
+    }
+}
+
+# ---------------------------------------------------------------------------
+# CELERY CONFIGURATION
+# ---------------------------------------------------------------------------
 # INTERNATIONALIZATION
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
