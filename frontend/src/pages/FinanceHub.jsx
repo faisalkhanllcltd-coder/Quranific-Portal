@@ -7,6 +7,7 @@ import {
   MessageCircle, Loader2, X, AlertTriangle, User,
   Users, Calculator, ArrowRight, Wallet, ShieldCheck, Info
 } from 'lucide-react';
+import { useStudents } from '../hooks/useStudents';
 
 // --- HELPER: Bulletproof Month Formatting ---
 const getCurrentMonthValue = () => {
@@ -32,6 +33,7 @@ const formatMonthDisplay = (dateString) => {
 // 1. FINANCIAL LEDGER SUB-VIEW
 // ─────────────────────────────────────────────────────────────────────────────
 const FinancialLedgerView = () => {
+  const { data: studentsData, isLoading: isLoadingStudents } = useStudents();
   const [payments, setPayments] = useState([]);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,15 +67,8 @@ const FinancialLedgerView = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [payRes, stuRes] = await Promise.all([
-          api.get('payments/', { signal: abortController.signal }),
-          api.get('students/', { signal: abortController.signal })
-        ]);
-
+        const payRes = await api.get('payments/', { signal: abortController.signal });
         setPayments(Array.isArray(payRes.data) ? payRes.data : (payRes.data.results || []));
-
-        const allStudents = Array.isArray(stuRes.data) ? stuRes.data : (stuRes.data.results || []);
-        setStudents(allStudents.filter(s => s.status === 'Joined' || s.status === 'Trial'));
       } catch (err) {
         if (err.name !== 'CanceledError') {
           console.error('Failed to load financials', err);
@@ -87,6 +82,12 @@ const FinancialLedgerView = () => {
 
     return () => abortController.abort();
   }, []);
+
+  useEffect(() => {
+    if (studentsData) {
+      setStudents(studentsData.filter(s => s.status === 'Joined' || s.status === 'Trial'));
+    }
+  }, [studentsData]);
 
   const getStudentName = (studentId) => {
     const s = students.find(x => x.id === parseInt(studentId, 10));
@@ -163,7 +164,9 @@ const FinancialLedgerView = () => {
   }, [payments, students, currentStrictMonth, searchTerm]);
 
 
-  if (loading) {
+  const isFullyLoading = loading || isLoadingStudents;
+
+  if (isFullyLoading) {
     return (
       <div className="space-y-8 animate-pulse">
         {/* 0-CLS Header Skeleton */}

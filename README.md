@@ -48,6 +48,8 @@ This project has an active audit and remediation pipeline. All CRITICAL and HIGH
 For anyone deploying manually outside of the automated CI pipeline, the following checks are strictly required to ensure production safety:
 
 1. **Migration Drift Check**: Run `python manage.py makemigrations --check --dry-run` in the `backend/` directory. If this command exits with an error or reports that migrations are missing, **do not deploy**. You must generate and commit the missing migrations first. Deploying with migration drift will cause the production database schema to fall out of sync with the application code.
+2. **Django Deployment Check**: Run `python manage.py check --deploy` with `DJANGO_DEBUG=False` in the environment. This validates that all production security settings (HSTS, secure cookies, allowed hosts) are correctly configured before traffic is served. Fix any reported critical issues before deploying.
+3. **OCI Networking / Firewall**: When deploying to Oracle Cloud Infrastructure (OCI), ensure the Virtual Cloud Network (VCN) Security Lists and instance iptables only expose ports `80` (HTTP), `443` (HTTPS), and LiveKit media ports (`7880`/tcp, `7881`/tcp, `7882`/udp). **Do NOT** expose `5432` (Postgres) or `6379` (Redis) to the public internet. They are secured within the Docker bridge network.
 
 ---
 

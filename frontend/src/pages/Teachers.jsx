@@ -237,7 +237,7 @@ export default function Staff() {
 
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <Link
-                  to={`/staff/${teacher.id}`}
+                  to={`/teachers/${teacher.id}`}
                   className="w-full py-2.5 text-sm font-bold text-slate-600 hover:text-emerald-700 bg-slate-50 hover:bg-emerald-50 rounded-lg transition-colors border border-slate-200 hover:border-emerald-200 text-center flex items-center justify-center gap-2"
                 >
                   <UserCog size={16} /> Manage Profile

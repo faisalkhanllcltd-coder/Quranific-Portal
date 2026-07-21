@@ -59,7 +59,7 @@ services:
 
   # ── 3. Video Server (LiveKit) ────────────────────────────────────────────────
   livekit:
-    image: livekit/livekit-server:latest
+    image: livekit/livekit-server:v1.6.0
     container_name: quranific_video
     restart: unless-stopped
     # A-P7-07: Removed --dev flag. Production mode: keys and config from livekit.yaml only.

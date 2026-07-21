@@ -6,6 +6,7 @@ import {
   ChevronRight, BarChart3, Video, Loader2
 } from 'lucide-react';
 import api from '../../api';
+import { useStudents } from '../../hooks/useStudents';
 
 // ── STAT CARD ─────────────────────────────────────────────────────────────
 function StatCard({ label, value, sub, icon: Icon, color = 'emerald', trend }) {
@@ -47,55 +48,25 @@ export default function OwnerDashboard() {
     attendance: [],
   });
 
-  // ── DATA FETCH WITH STALE-WHILE-REVALIDATE CACHE (A-P6-04) ──────────────
-  // Problem: 4 concurrent fetches fire on every navigation to this page.
-  // Fix: sessionStorage cache with 60-second stale window.
-  //   1. On mount, if cache < 60s old → render immediately from cache (loading=false)
-  //      then silently re-fetch in the background and update.
-  //   2. If cache is stale/absent → show skeleton, fetch, then store result.
-  // Cache is session-scoped (clears on tab close) — no stale data across logins.
-  const CACHE_KEY = 'ownerDashboard_cache';
-  const CACHE_TTL = 60_000; // 60 seconds
-
+  const { data: studentsData, isLoading: isLoadingStudents } = useStudents();
+  
   useEffect(() => {
     const abortController = new AbortController();
     const today = new Date().toISOString().split('T')[0];
     const currentMonth = today.slice(0, 7); // YYYY-MM
 
-    // ── Try to serve from cache first ──
-    try {
-      const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
-      if (cached && Date.now() - cached.ts < CACHE_TTL) {
-        setData(cached.data);
-        setLoading(false);
-        // Fall through — still revalidate silently below
-      }
-    } catch {
-      sessionStorage.removeItem(CACHE_KEY);
-    }
-
-    // ── Fetch (fresh load or background revalidation) ──
     Promise.all([
-      api.get('students/', { signal: abortController.signal }).catch(() => ({ data: [] })),
       api.get('accounts/teachers/', { signal: abortController.signal }).catch(() => ({ data: [] })),
-      // A-P6-04: scope to current month — avoids fetching the entire payment history
       api.get(`payments/?month_paid_for=${currentMonth}`, { signal: abortController.signal }).catch(() => ({ data: [] })),
       api.get(`attendance/?date=${today}`, { signal: abortController.signal }).catch(() => ({ data: [] })),
     ])
-      .then(([stuRes, tchRes, payRes, attRes]) => {
-        const fresh = {
-          students:   Array.isArray(stuRes.data) ? stuRes.data : (stuRes.data.results ?? []),
+      .then(([tchRes, payRes, attRes]) => {
+        setData(prev => ({
+          ...prev,
           teachers:   Array.isArray(tchRes.data) ? tchRes.data : (tchRes.data.results ?? []),
           payments:   Array.isArray(payRes.data) ? payRes.data : (payRes.data.results ?? []),
           attendance: Array.isArray(attRes.data) ? attRes.data : (attRes.data.results ?? []),
-        };
-        setData(fresh);
-        // Store in sessionStorage for next navigation within this tab
-        try {
-          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: fresh }));
-        } catch {
-          // Quota exceeded or private mode — fail silently
-        }
+        }));
       })
       .catch(err => {
         if (err.name !== 'CanceledError') console.error('Owner dashboard fetch error:', err);
@@ -104,6 +75,15 @@ export default function OwnerDashboard() {
 
     return () => abortController.abort();
   }, []);
+
+  // Sync students data into local state to maintain compatibility with existing render logic
+  useEffect(() => {
+    if (studentsData) {
+      setData(prev => ({ ...prev, students: studentsData }));
+    }
+  }, [studentsData]);
+
+  const isFullyLoading = loading || isLoadingStudents;
 
   const handleStartDynamicClass = async () => {
     try {
@@ -146,7 +126,7 @@ export default function OwnerDashboard() {
   const recentStudents = [...data.students].sort((a, b) => b.id - a.id).slice(0, 5);
 
   // ── 0-CLS SKELETON LOADER ──
-  if (loading) return (
+  if (isFullyLoading) return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-pulse">
       <div className="h-20 bg-slate-200 rounded-xl w-full"></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">

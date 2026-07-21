@@ -30,7 +30,7 @@ const AdminOverview = ({ setActiveTab, navigate }) => {
                         <div className="p-3 bg-gradient-to-br from-slate-800 to-slate-900 text-emerald-400 rounded-2xl shadow-lg shadow-slate-900/20 border border-slate-700">
                             <ShieldCheck size={28} />
                         </div>
-                        <h1 className="text-4xl font-black text-slate-800 tracking-tight">Command Center</h1>
+                        <h1 className="text-4xl font-black text-slate-800 tracking-tight">Security & Operations</h1>
                     </div>
                     <p className="text-slate-600 text-sm font-medium flex items-center gap-2">
                         <ShieldAlert size={16} className="text-rose-500" />

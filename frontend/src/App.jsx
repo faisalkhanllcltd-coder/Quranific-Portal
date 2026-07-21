@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import RoleRoute from './components/RoleRoute';
 import ErrorBoundary from './components/ErrorBoundary';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // ── EDGE-LIGHTWEIGHT ROUTING (Code Splitting) ──────────────────────────────
 // By wrapping these in React.lazy, we ensure the browser only downloads the 
@@ -12,7 +13,7 @@ const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Attendance = React.lazy(() => import('./pages/Attendance'));
 const StudentList = React.lazy(() => import('./pages/StudentList'));
 const StudentProfile = React.lazy(() => import('./pages/StudentProfile'));
-const Staff = React.lazy(() => import('./pages/Staff'));
+const Teachers = React.lazy(() => import('./pages/Teachers'));
 const TeacherProfile = React.lazy(() => import('./pages/TeacherProfile'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const Classroom = React.lazy(() => import('./pages/Classroom'));
@@ -25,7 +26,7 @@ const Analytics = React.lazy(() => import('./pages/Analytics'));
 // ── ROLE CONSTANTS ─────────────────────────────────────────────────────────
 const SUPER_ADMIN_ROLES = ['owner', 'head_manager'];      // /admin, /analytics
 const FINANCE_ROLES = ['owner', 'head_manager'];          // /finance
-const STAFF_ROLES = ['owner', 'head_manager', 'manager']; // /staff
+const STAFF_ROLES = ['owner', 'head_manager', 'manager']; // /teachers
 const ALL_STAFF = ['owner', 'head_manager', 'manager', 'teacher']; // /students
 
 // ── PROTECTED ROUTE GUARD ──────────────────────────────────────────────────
@@ -48,14 +49,17 @@ const PageLoader = () => (
   </div>
 );
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        {/* The global Suspense boundary catches any lazy-loaded component
-          and renders the PageLoader until the chunk is ready. 
-        */}
-        <Suspense fallback={<PageLoader />}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ErrorBoundary>
+          {/* The global Suspense boundary catches any lazy-loaded component
+            and renders the PageLoader until the chunk is ready. 
+          */}
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* ── PUBLIC ROUTES ── */}
             <Route path="/" element={<Navigate to="/login" replace />} />
@@ -95,10 +99,6 @@ function App() {
                   </RoleRoute>
                 }
               />
-              {/* Legacy Sidebar Redirects to Admin Hub */}
-              <Route path="/admin-console" element={<Navigate to="/admin" replace />} />
-              <Route path="/system-logs" element={<Navigate to="/admin" replace />} />
-              <Route path="/recovery-vault" element={<Navigate to="/admin" replace />} />
 
               <Route
                 path="/finance"
@@ -108,9 +108,6 @@ function App() {
                   </RoleRoute>
                 }
               />
-              {/* Legacy Sidebar Redirects to Finance Hub */}
-              <Route path="/financials" element={<Navigate to="/finance" replace />} />
-              <Route path="/payroll" element={<Navigate to="/finance" replace />} />
 
               <Route
                 path="/analytics"
@@ -131,14 +128,6 @@ function App() {
                 }
               />
               <Route
-                path="/all-students"
-                element={
-                  <RoleRoute allowedRoles={ALL_STAFF}>
-                    <StudentList />
-                  </RoleRoute>
-                }
-              />
-              <Route
                 path="/students/:id"
                 element={
                   <RoleRoute allowedRoles={ALL_STAFF}>
@@ -148,15 +137,15 @@ function App() {
               />
 
               <Route
-                path="/staff"
+                path="/teachers"
                 element={
                   <RoleRoute allowedRoles={STAFF_ROLES}>
-                    <Staff />
+                    <Teachers />
                   </RoleRoute>
                 }
               />
               <Route
-                path="/staff/:id"
+                path="/teachers/:id"
                 element={
                   <RoleRoute allowedRoles={STAFF_ROLES}>
                     <TeacherProfile />
@@ -171,6 +160,7 @@ function App() {
         </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
+        </QueryClientProvider>
   );
 }
 

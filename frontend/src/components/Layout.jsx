@@ -10,56 +10,56 @@ import {
 // ── NAV CONFIGURATION ──
 const NAV_CONFIG = {
   owner: [
-    { path: '/dashboard', label: 'Command Center', icon: LayoutDashboard },
-    { path: '/analytics', label: 'The War Room', icon: TrendingUp },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/analytics', label: 'Analytics', icon: TrendingUp },
     { path: '/admin', label: 'Admin Console', icon: ShieldCheck },
-    { path: '/students', label: 'Student Body', icon: Users },
-    { path: '/attendance', label: 'Global Attendance', icon: CalendarCheck },
-    { path: '/assignments', label: 'Assignments', icon: BookOpen },
-    { path: '/library', label: 'Resource Library', icon: FileText },
-    { path: '/finance', label: 'Finance Command', icon: DollarSign },
-    { path: '/staff', label: 'Manage Staff', icon: Briefcase },
-    { path: '/settings', label: 'Global Settings', icon: Settings },
-  ],
-  head_manager: [
-    { path: '/dashboard', label: 'Academy Overview', icon: LayoutDashboard },
-    { path: '/analytics', label: 'Platform Analytics', icon: TrendingUp },
-    { path: '/admin', label: 'Admin Console', icon: ShieldCheck },
-    { path: '/students', label: 'Student Roster', icon: Users },
+    { path: '/students', label: 'Students', icon: Users },
     { path: '/attendance', label: 'Attendance', icon: CalendarCheck },
     { path: '/assignments', label: 'Assignments', icon: BookOpen },
-    { path: '/library', label: 'Resource Library', icon: FileText },
-    { path: '/finance', label: 'Finance Command', icon: DollarSign },
-    { path: '/staff', label: 'View Teachers', icon: Briefcase },
+    { path: '/library', label: 'Library', icon: FileText },
+    { path: '/finance', label: 'Finance', icon: DollarSign },
+    { path: '/staff', label: 'Teachers', icon: Briefcase },
+    { path: '/settings', label: 'Settings', icon: Settings },
+  ],
+  head_manager: [
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/analytics', label: 'Analytics', icon: TrendingUp },
+    { path: '/admin', label: 'Admin Console', icon: ShieldCheck },
+    { path: '/students', label: 'Students', icon: Users },
+    { path: '/attendance', label: 'Attendance', icon: CalendarCheck },
+    { path: '/assignments', label: 'Assignments', icon: BookOpen },
+    { path: '/library', label: 'Library', icon: FileText },
+    { path: '/finance', label: 'Finance', icon: DollarSign },
+    { path: '/staff', label: 'Teachers', icon: Briefcase },
   ],
   manager: [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/attendance', label: 'Mark Attendance', icon: CalendarCheck },
-    { path: '/students', label: 'Students List', icon: GraduationCap },
+    { path: '/attendance', label: 'Attendance', icon: CalendarCheck },
+    { path: '/students', label: 'Students', icon: GraduationCap },
     { path: '/assignments', label: 'Assignments', icon: BookOpen },
-    { path: '/library', label: 'Resource Library', icon: FileText },
-    { path: '/staff', label: 'Staff List', icon: Briefcase },
+    { path: '/library', label: 'Library', icon: FileText },
+    { path: '/staff', label: 'Teachers', icon: Briefcase },
   ],
   teacher: [
-    { path: '/dashboard', label: 'My Classroom', icon: LayoutDashboard },
-    { path: '/attendance', label: 'Mark Attendance', icon: CalendarCheck },
-    { path: '/students', label: 'My Students', icon: Users },
+    { path: '/dashboard', label: 'Classroom', icon: LayoutDashboard },
+    { path: '/attendance', label: 'Attendance', icon: CalendarCheck },
+    { path: '/students', label: 'Students', icon: Users },
     { path: '/assignments', label: 'Assignments', icon: BookOpen },
-    { path: '/library', label: 'Resource Library', icon: FileText },
-    { path: '/settings', label: 'Profile Settings', icon: Settings },
+    { path: '/library', label: 'Library', icon: FileText },
+    { path: '/settings', label: 'Settings', icon: Settings },
   ],
   parent: [
-    { path: '/dashboard', label: 'Family Overview', icon: LayoutDashboard },
-    { path: '/attendance', label: 'Children Attendance', icon: CalendarCheck },
-    { path: '/assignments', label: 'Children Progress', icon: BookOpen },
-    { path: '/finance', label: 'Unified Billing', icon: DollarSign },
-    { path: '/settings', label: 'My Profile', icon: UserIcon },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/attendance', label: 'Attendance', icon: CalendarCheck },
+    { path: '/assignments', label: 'Assignments', icon: BookOpen },
+    { path: '/finance', label: 'Billing', icon: DollarSign },
+    { path: '/settings', label: 'Settings', icon: UserIcon },
   ],
   student: [
-    { path: '/dashboard', label: 'My Progress', icon: LayoutDashboard },
-    { path: '/assignments', label: 'My Homework', icon: BookOpen },
-    { path: '/library', label: 'Study Materials', icon: FileText },
-    { path: '/settings', label: 'My Profile', icon: UserIcon },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/assignments', label: 'Assignments', icon: BookOpen },
+    { path: '/library', label: 'Library', icon: FileText },
+    { path: '/settings', label: 'Settings', icon: UserIcon },
   ],
 };
 
@@ -67,8 +67,8 @@ const ROLE_LABELS = {
   owner: 'Owner',
   head_manager: 'Head Manager',
   manager: 'Manager',
-  teacher: 'Ustad',
-  parent: 'Parent / Guardian',
+  teacher: 'Teacher',
+  parent: 'Parent',
   student: 'Student',
 };
 
@@ -312,12 +312,6 @@ export default function Layout() {
                       className="w-full flex items-center gap-3 px-3 py-2 text-sm font-bold text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                     >
                       <UserIcon size={16} /> My Profile
-                    </button>
-                    <button
-                      onClick={() => { navigate('/settings'); setIsProfileMenuOpen(false); }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-sm font-bold text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                    >
-                      <Settings size={16} /> Account Settings
                     </button>
                     <div className="h-px bg-slate-100 my-1"></div>
                     <button

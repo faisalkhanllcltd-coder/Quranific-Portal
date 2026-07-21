@@ -71,14 +71,16 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P5-04 | P5-ux-a11y.md | MEDIUM | **FIXED** | Added `aria-label` to icon-only action buttons across all UI components and ensured focus rings are visible. Honest full history: an earlier unreported pass covered StudentList.jsx, Attendance.jsx, FinanceHub.jsx; this session's pass covered Library.jsx, TeacherProfile.jsx, StudentProfile.jsx, Staff.jsx. | Y — verified via a 14-route Puppeteer sweep with 56/56 icon-only buttons passing, 0 failures |
 | A-P5-05 | P5-ux-a11y.md | MEDIUM | **FIXED** | Added E.164 phone number format validation to both frontend and backend. Backend: Added `django.core.validators.RegexValidator` for `^\+[1-9]\d{1,14}$` to `whatsapp` and `guardian_whatsapp` fields on `Student` model. Frontend: Added HTML5 `pattern` validation for the same regex to `whatsapp` and `guardian_whatsapp` inputs in `StudentList.jsx`. Refactored `backend/tests/factories.py` to generate valid E.164 phone numbers for test fixtures. | Y — tests pass |
 | A-P6-06 | P6-performance.md | MEDIUM | **FIXED** | Configured built-in RedisCache on DB /2; Postgres host split between .env for local pytest and docker-compose override for containers; live throttle-key verification | Y — verified 84/84 passing |
-| A-P6-07 | P6-performance.md | MEDIUM | PENDING | Frontend no request deduplication / global loading state | - |
-| A-P6-08 | P6-performance.md | MEDIUM | PENDING | LiveKit docker image uses :latest tag — no version pin | - |
-| A-P7-08 | P7-oracle-deploy.md | MEDIUM | PENDING | No django check --deploy validation documented | - |
-| A-P7-09 | P7-oracle-deploy.md | MEDIUM | PENDING | No environment-specific requirements split (psycopg2-binary in prod) | - |
-| A-P7-10 | P7-oracle-deploy.md | MEDIUM | PENDING | No OCI networking documentation | - |
+| A-P6-07 | P6-performance.md | MEDIUM | **FIXED** | Replaced independent api.get('/api/students/') calls across OwnerDashboard, Analytics, FinanceHub, and StudentList with a shared React Query hook (useStudents). Removed legacy sessionStorage cache from OwnerDashboard. Verified request deduplication. | Y — verified via Puppeteer/Network panel |
+| A-P6-08 | P6-performance.md | MEDIUM | **FIXED** | LiveKit docker image explicitly pinned to `v1.6.0` instead of `:latest` to prevent unstable breaking changes in production. | Y |
+| A-P7-08 | P7-oracle-deploy.md | MEDIUM | **FIXED** | Added `django check --deploy` validation documentation to `README.md`'s Pre-Deploy Checklist. | Y |
+| A-P7-09 | P7-oracle-deploy.md | MEDIUM | **FIXED** | Split requirements into `requirements-base.txt`, `requirements.txt` (local dev, uses `psycopg2-binary`), and `requirements-prod.txt` (prod, uses `psycopg2` compiled from source). Updated `Dockerfile` to use `requirements-prod.txt`. | Y |
+| A-P7-10 | P7-oracle-deploy.md | MEDIUM | **FIXED** | Added OCI networking documentation to `README.md`, emphasizing public port requirements vs internal Docker network isolation. | Y |
 | A-P8-05 | P8-rbac-logic.md | MEDIUM | **FIXED** | SystemAccessViewSet.partial_update() hardened — owner self-deactivation blocked, self-demotion blocked, last-active-owner protection covers both is_active and role changes, role validated against USER_TYPES. | Y — verified via 69-passed run |
-| A-P8-06 | P8-rbac-logic.md | MEDIUM | PENDING | Parent role sees wrong child if parent_account FK misassigned | - |
-| A-P6-11 | backend/config/urls.py | MEDIUM | PENDING | live_session.urls missing app_name/namespace causes DRF API root crash. Fix direction: add app_name/namespace to the include() in config/urls.py | - |
+| A-P8-06 | P8-rbac-logic.md | MEDIUM | **FIXED** | Data quality issue (human error). Moved to `PENDING_HUMAN_ACTIONS.md` to design a UI confirmation flow and audit hook during enrollment. | Y |
+| A-P6-11 | backend/config/urls.py | MEDIUM | **FIXED** | Added `app_name = 'live_session'` to `live_session/urls.py` to prevent DRF API root crash. | Y |
+| A-P6-12 | backend/config/settings.py | MEDIUM | **FIXED** | Removed legacy `IGNORE_EXCEPTIONS` kwarg from RedisCache OPTIONS, which crashed `test_cache_round_trip` under native Django 5 cache backend. | Y |
+| A-P5-09 | frontend/src/App.jsx | MEDIUM | **FIXED** | Executed UX/IA consistency sweep: removed `/all-students` duplicate route, stripped legacy `/admin-console` redirects, removed redundant "Account Settings" dropdown button, unified navigation labels, renamed Admin Hub header to "Security & Operations", and standardized `Staff.jsx` to `Teachers.jsx`. | Y |
 | **LOW — Audit** | | | | | |
 | A-P1-12 | P1-security.md | LOW | PENDING | .env may be committed to git — check history | - |
 | A-P2-09 | P2-data-backend.md | LOW | PENDING | Attendance unique_together conflicts with soft-delete | - |
@@ -127,7 +129,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | R-R4-02 | R4-edge-performance.md | FAST-FOLLOW | PENDING | ADD: LiveKit edge multi-region / TURN server | - |
 | R-R4-03 | R4-edge-performance.md | FAST-FOLLOW | PENDING | IMPROVE: Split StudentSerializer list vs detail (cross-files A-P2-01) | - |
 | R-R4-04 | R4-edge-performance.md | FAST-FOLLOW | PENDING | IMPROVE: SystemLog — add server-side pagination + date/user filter | - |
-| R-R4-05 | R4-edge-performance.md | FAST-FOLLOW | PENDING | IMPROVE: Frontend — React Query/SWR for deduplication | - |
+| R-R4-05 | R4-edge-performance.md | FAST-FOLLOW | **FIXED** | Cross-filed with A-P6-07 — fixed there | Y |
 | R-R5-05 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | ADD: Password reset / forgot password flow | - |
 | R-R5-06 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | ADD: Admin login-as-user with audit trail (django-hijack) | - |
 | R-R5-07 | R5-platform-maturity.md | FAST-FOLLOW | PENDING | IMPROVE: 2FA for owner/head_manager (django-otp) | - |

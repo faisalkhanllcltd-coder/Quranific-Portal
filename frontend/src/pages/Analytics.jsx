@@ -7,10 +7,12 @@ import {
     Activity, PieChart, Loader2, ArrowUpRight,
     ArrowDownRight, Target, Zap, ArrowLeft
 } from 'lucide-react';
+import { useStudents } from '../hooks/useStudents';
 
 export default function Analytics() {
   useDocumentTitle('Analytics');
     const navigate = useNavigate();
+    const { data: studentsData, isLoading: isLoadingStudents } = useStudents();
     const [loading, setLoading] = useState(true);
     const [metrics, setMetrics] = useState({
         totalStudents: 0,
@@ -28,31 +30,17 @@ export default function Analytics() {
         try {
             // Production Fix: Added individual .catch() to each request.
             // If the payments API goes down, you still get to see your Student numbers.
-            const [stuRes, staffRes, payRes] = await Promise.all([
-                api.get('students/').catch(err => { console.error("Students fetch failed", err); return { data: [] }; }),
+            const [staffRes, payRes] = await Promise.all([
                 api.get('accounts/teachers/').catch(err => { console.error("Teachers fetch failed", err); return { data: [] }; }),
                 api.get('payments/').catch(err => { console.error("Payments fetch failed", err); return { data: [] }; })
             ]);
-
-            const students = Array.isArray(stuRes.data) ? stuRes.data : (stuRes.data.results || []);
             const staff = Array.isArray(staffRes.data) ? staffRes.data : (staffRes.data.results || []);
             const payments = Array.isArray(payRes.data) ? payRes.data : (payRes.data.results || []);
 
-            const activeStudents = students.filter(s => s.status?.toLowerCase() === 'joined').length;
-
-            // Calculate MRR (Assuming $50 base fee per active student for projection)
-            const projectedMRR = activeStudents * 50;
-
-            // Mocking an attendance rate based on active students
-            const simulatedAttendanceRate = activeStudents > 0 ? 92.4 : 0;
-
-            setMetrics({
-                totalStudents: students.length,
-                activeStudents: activeStudents,
+            setMetrics(prev => ({
+                ...prev,
                 totalTeachers: staff.length,
-                mrr: projectedMRR,
-                attendanceRate: simulatedAttendanceRate
-            });
+            }));
 
         } catch (error) {
             console.error("Failed to load War Room analytics", error);
@@ -61,7 +49,31 @@ export default function Analytics() {
         }
     };
 
-    if (loading) {
+    // Re-calculate metrics when studentsData or base data updates
+    useEffect(() => {
+        if (!studentsData || loading) return;
+        
+        const students = studentsData;
+        const activeStudents = students.filter(s => s.status?.toLowerCase() === 'joined').length;
+
+        // Calculate MRR (Assuming $50 base fee per active student for projection)
+        const projectedMRR = activeStudents * 50;
+
+        // Mocking an attendance rate based on active students
+        const simulatedAttendanceRate = activeStudents > 0 ? 92.4 : 0;
+
+        setMetrics(prev => ({
+            ...prev,
+            totalStudents: students.length,
+            activeStudents: activeStudents,
+            mrr: projectedMRR,
+            attendanceRate: simulatedAttendanceRate
+        }));
+    }, [studentsData, loading]);
+
+    const isFullyLoading = loading || isLoadingStudents;
+
+    if (isFullyLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#fbfdf9] relative overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-200/30 rounded-full mix-blend-multiply blur-[120px] animate-pulse" />

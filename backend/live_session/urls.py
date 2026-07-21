@@ -6,6 +6,8 @@ live_session — URL Configuration
 from django.urls import path
 from .views import GenerateTokenView, EndSessionView, LiveKitWebhookView, CreateDynamicRoomView
 
+app_name = 'live_session'
+
 urlpatterns = [
     # POST /api/live/token/       — Get a LiveKit JWT to join a room
     path('token/', GenerateTokenView.as_view(), name='livekit-token'),

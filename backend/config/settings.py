@@ -164,13 +164,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # ---------------------------------------------------------------------------
 # CACHE CONFIGURATION
 # ---------------------------------------------------------------------------
+_redis_url = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
 _cache_redis_url = _redis_url.rsplit('/', 1)[0] + '/2'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': _cache_redis_url,
         'OPTIONS': {
-            'IGNORE_EXCEPTIONS': True,
         }
     }
 }
@@ -382,7 +382,6 @@ if not DEBUG and _sentry_dsn:
 # ---------------------------------------------------------------------------
 # CELERY & REDIS (R-R3-01 / A-P4-04)
 # ---------------------------------------------------------------------------
-_redis_url = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
 # Change the db index from 0 to 1 for celery to avoid cache collision (R-R3-04)
 _celery_redis_url = _redis_url.rsplit('/', 1)[0] + '/1'
 
