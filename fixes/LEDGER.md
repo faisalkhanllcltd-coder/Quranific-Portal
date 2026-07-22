@@ -78,7 +78,7 @@ Priority order: CRITICAL (audit) → HIGH (audit) → LAUNCH-BLOCKING (roadmap) 
 | A-P7-10 | P7-oracle-deploy.md | MEDIUM | **FIXED** | Added OCI networking documentation to `README.md`, emphasizing public port requirements vs internal Docker network isolation. | Y |
 | A-P8-05 | P8-rbac-logic.md | MEDIUM | **FIXED** | SystemAccessViewSet.partial_update() hardened — owner self-deactivation blocked, self-demotion blocked, last-active-owner protection covers both is_active and role changes, role validated against USER_TYPES. | Y — verified via 69-passed run |
 | A-P8-06 | P8-rbac-logic.md | MEDIUM | **FIXED** | Data quality issue (human error). Moved to `PENDING_HUMAN_ACTIONS.md` to design a UI confirmation flow and audit hook during enrollment. | Y |
-| A-P6-11 | backend/config/urls.py | MEDIUM | **FIXED** | Added `app_name = 'live_session'` to `live_session/urls.py` to prevent DRF API root crash. | Y |
+| A-P6-11 | backend/config/urls.py | MEDIUM | **FIXED** | Added `app_name = 'live_session'` to `live_session/urls.py` and added `test_api_root.py` to verify DRF API root crash resolution. | Y |
 | A-P6-12 | backend/config/settings.py | MEDIUM | **FIXED** | Removed legacy `IGNORE_EXCEPTIONS` kwarg from RedisCache OPTIONS, which crashed `test_cache_round_trip` under native Django 5 cache backend. | Y |
 | A-P5-09 | frontend/src/App.jsx | MEDIUM | **FIXED** | Executed UX/IA consistency sweep: removed `/all-students` duplicate route, stripped legacy `/admin-console` redirects, removed redundant "Account Settings" dropdown button, unified navigation labels, renamed Admin Hub header to "Security & Operations", and standardized `Staff.jsx` to `Teachers.jsx`. | Y |
 | **LOW — Audit** | | | | | |
